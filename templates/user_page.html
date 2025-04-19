@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user.name }}'s Profile - Video Game Distribution Service{% endblock %}
+
+{% block content %}
+<!-- User Profile Header -->
+<div class="glass-effect mt-4 rounded-lg">
+    <div class="py-8 px-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-white">{{ user.name }}</h1>
+                <p class="mt-2 text-lg text-gray-300">
+                    Player Profile
+                </p>
+            </div>
+            <div class="mt-4 md:mt-0 flex space-x-4">
+                <a href="{% url 'games' %}" class="btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
+                    Look Games
+                </a>
+                <a href="{% url 'home' %}" class="btn bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded">
+                    Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+    <!-- Average of Ratings -->
+    <div class="glass-effect rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Average of Ratings</h2>
+        <div class="flex items-center">
+            <div class="text-4xl font-bold {% if user.average_rating >= 4 %}text-green-400{% elif user.average_rating >= 3 %}text-yellow-400{% elif user.average_rating >= 2 %}text-orange-400{% else %}text-red-400{% endif %}">
+                {{ user.average_rating|floatformat:1 }}
+            </div>
+            <div class="ml-4 text-gray-300">
+                out of 5
+            </div>
+        </div>
+        <p class="mt-2 text-sm text-gray-400">
+            Average rating given to games by {{ user.name }}
+        </p>
+    </div>
+    
+    <!-- Total Play Time -->
+    <div class="glass-effect rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Total Play Time</h2>
+        <div class="flex items-center">
+            <div class="text-4xl font-bold text-blue-400">
+                {{ user.total_play_time }}
+            </div>
+            <div class="ml-4 text-gray-300">
+                hours
+            </div>
+        </div>
+        <p class="mt-2 text-sm text-gray-400">
+            Total time spent playing games
+        </p>
+    </div>
+    
+    <!-- Most Played Game -->
+    <div class="glass-effect rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Most Played Game</h2>
+        {% if user.most_played_game %}
+        <div>
+            <div class="text-xl font-bold text-purple-400">
+                {{ user.most_played_game.game_name }}
+            </div>
+            <div class="mt-1 text-gray-300">
+                {{ user.most_played_game.play_time }} hours
+            </div>
+            <a href="{% url 'game_detail' user.most_played_game.game_id %}" class="mt-2 text-sm text-blue-400 hover:text-blue-300 inline-block">
+                View Game →
+            </a>
+        </div>
+        {% else %}
+        <p class="text-gray-400">
+            No games played yet
+        </p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Game Actions Section -->
+<div class="glass-effect rounded-lg p-6 mt-6">
+    <h2 class="text-2xl font-semibold mb-6">Game Actions</h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Play Game Form -->
+        <div class="bg-gray-800 bg-opacity-50 p-5 rounded-lg">
+            <h3 class="text-lg font-medium mb-3">Play Game</h3>
+            <form method="POST" action="{% url 'play_game' user._id %}">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div>
+                        <label for="play_game_id" class="block text-sm font-medium text-gray-300">Select Game</label>
+                        <select name="game_id" id="play_game_id" required
+                            class="mt-1 block w-full rounded-md px-3 py-2">
+                            <option value="">Select a game</option>
+                            {% for game in games %}
+                            <option value="{{ game._id }}">{{ game.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="play_hours" class="block text-sm font-medium text-gray-300">Hours to Play</label>
+                        <input type="number" name="hours" id="play_hours" min="1" max="24" value="1" required
+                            class="mt-1 block w-full rounded-md px-3 py-2">
+                    </div>
+                    <button type="submit" class="btn w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        Play Game
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Rate Game Form -->
+        <div class="bg-gray-800 bg-opacity-50 p-5 rounded-lg">
+            <h3 class="text-lg font-medium mb-3">Rate Game</h3>
+            <form method="POST" action="{% url 'rate_game' user._id %}">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div>
+                        <label for="rate_game_id" class="block text-sm font-medium text-gray-300">Select Game</label>
+                        <select name="game_id" id="rate_game_id" required
+                            class="mt-1 block w-full rounded-md px-3 py-2">
+                            <option value="">Select a game</option>
+                            {% for game in playable_games %}
+                            <option value="{{ game._id }}">{{ game.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="rating" class="block text-sm font-medium text-gray-300">Rating (1-5)</label>
+                        <select name="rating" id="rating" required
+                            class="mt-1 block w-full rounded-md px-3 py-2">
+                            <option value="5">5 - Excellent</option>
+                            <option value="4">4 - Very Good</option>
+                            <option value="3">3 - Good</option>
+                            <option value="2">2 - Fair</option>
+                            <option value="1">1 - Poor</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn w-full bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
+                        Rate Game
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Comment on Game Form -->
+        <div class="bg-gray-800 bg-opacity-50 p-5 rounded-lg">
+            <h3 class="text-lg font-medium mb-3">Comment on Game</h3>
+            <form method="POST" action="{% url 'comment_game' user._id %}">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div>
+                        <label for="comment_game_id" class="block text-sm font-medium text-gray-300">Select Game</label>
+                        <select name="game_id" id="comment_game_id" required
+                            class="mt-1 block w-full rounded-md px-3 py-2">
+                            <option value="">Select a game</option>
+                            {% for game in playable_games %}
+                            <option value="{{ game._id }}">{{ game.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label for="comment_text" class="block text-sm font-medium text-gray-300">Comment</label>
+                        <textarea name="comment" id="comment_text" rows="3" required
+                            class="mt-1 block w-full rounded-md px-3 py-2 resize-none"></textarea>
+                    </div>
+                    <button type="submit" class="btn w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
+                        Submit Comment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- User Comments Section -->
+<div class="glass-effect rounded-lg p-6 mt-6">
+    <h2 class="text-2xl font-semibold mb-6">Comments</h2>
+    
+    <div class="space-y-4">
+        {% for comment in user_comments %}
+        <div class="comment">
+            <div class="comment-author">
+                {{ comment.game_name }}
+            </div>
+            <div class="comment-text">
+                {{ comment.text }}
+            </div>
+            <div class="comment-playtime">
+                Played for {{ comment.play_time }} hours
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center text-gray-400">
+            No comments yet. Play games and share your thoughts!
+        </p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Games Played Section -->
+<div class="glass-effect rounded-lg p-6 mt-6">
+    <h2 class="text-2xl font-semibold mb-6">Games Played</h2>
+    
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-700">
+            <thead class="bg-gray-800 bg-opacity-60">
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Game
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Play Time
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Rating
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-gray-800 bg-opacity-20 divide-y divide-gray-700">
+                {% for interaction in game_interactions %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-white">{{ interaction.game_name }}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-300">{{ interaction.play_time }} hours</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% if interaction.rating > 0 %}
+                        <div class="text-sm text-gray-300">{{ interaction.rating }} / 5</div>
+                        {% else %}
+                        <div class="text-sm text-gray-500">Not rated</div>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                        <a href="{% url 'game_detail' interaction.game_id %}" class="text-blue-400 hover:text-blue-300">
+                            View Game
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-6 py-4 text-center text-sm text-gray-400">
+                        No games played yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    // User page specific script initializations
+    function initPageSpecificScripts() {
+        // Handle pre-selected game if passed in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const playGameId = urlParams.get('play_game');
+        
+        if (playGameId) {
+            const playGameSelect = document.getElementById('play_game_id');
+            if (playGameSelect) {
+                for (let i = 0; i < playGameSelect.options.length; i++) {
+                    if (playGameSelect.options[i].value === playGameId) {
+                        playGameSelect.selectedIndex = i;
+                        // Scroll to play game form
+                        playGameSelect.closest('form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Live validation for rating and comment forms
+        const rateGameSelect = document.getElementById('rate_game_id');
+        const commentGameSelect = document.getElementById('comment_game_id');
+        const rateSubmitBtn = rateGameSelect?.closest('form').querySelector('button[type="submit"]');
+        const commentSubmitBtn = commentGameSelect?.closest('form').querySelector('button[type="submit"]');
+        
+        if (rateGameSelect && rateSubmitBtn) {
+            if (rateGameSelect.options.length <= 1) { // Only has the default "Select a game" option
+                rateSubmitBtn.disabled = true;
+                rateSubmitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                rateSubmitBtn.title = 'You need to play a game for at least 1 hour before rating';
+            }
+        }
+        
+        if (commentGameSelect && commentSubmitBtn) {
+            if (commentGameSelect.options.length <= 1) { // Only has the default "Select a game" option
+                commentSubmitBtn.disabled = true;
+                commentSubmitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                commentSubmitBtn.title = 'You need to play a game for at least 1 hour before commenting';
+            }
+        }
+    }
+</script>
+{% endblock %}
+{% endblock %}

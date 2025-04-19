@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Game Distribution Service</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/game.png') }}">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        body {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .fade-in-element {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+
+        .fade-in-element.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .header-glass {
+            background: rgba(2, 6, 23, 0.85); /* Daha koyu ve opak arka plan */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .glass-card.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.25);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .stats-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+
+        .search-button {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .search-button:hover {
+            background: rgba(15, 23, 42, 0.8);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        select option {
+            background-color: #0f172a;
+            color: #e5e7eb;
+        }
+        
+        select option:checked {
+            background-color: #1e293b;
+        }
+
+        select, input[type="text"] {
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            transition: all 0.3s ease;
+        }
+
+        select:hover, select:focus,
+        input[type="text"]:hover, input[type="text"]:focus {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            outline: none !important;
+            transform: translateY(-2px);
+        }
+
+        .score-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .score-badge:hover {
+            transform: scale(1.1);
+        }
+
+        .score-excellent {
+            background: rgba(34, 197, 94, 0.2);
+            color: rgb(134, 239, 172);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .score-good {
+            background: rgba(234, 179, 8, 0.2);
+            color: rgb(253, 224, 71);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .score-average {
+            background: rgba(249, 115, 22, 0.2);
+            color: rgb(253, 186, 116);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+        }
+
+        .score-poor {
+            background: rgba(239, 68, 68, 0.2);
+            color: rgb(252, 165, 165);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        a {
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <nav class="header-glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="font-bold text-xl">Video Game Distribution</a>
+                </div>
+                <div class="flex space-x-4">
+                    <a href="/" class="nav-link px-3 py-2 rounded-md text-sm font-medium transition" data-page="home">Ana Sayfa</a>
+                    <a href="/games" class="nav-link px-3 py-2 rounded-md text-sm font-medium transition" data-page="games">Oyunlar</a>
+                    <a href="/user" class="nav-link px-3 py-2 rounded-md text-sm font-medium transition" data-page="user">Profil</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="glass-effect mt-8 fade-in-element">
+            <div class="max-w-7xl mx-auto py-12 px-4">
+                <div class="text-center">
+                    <h1 class="text-4xl font-bold text-white">
+                        Ücretsiz Oyun Dağıtım Servisi
+                    </h1>
+                    <p class="mt-4 text-xl text-gray-300">
+                        Ücretsiz oyunları keşfedin, oynayın, puanlayın ve yorum yapın
+                    </p>
+                </div>
+
+                <div class="mt-10 fade-in-element">
+                    <div class="glass-effect rounded-lg p-6">
+                        <div class="flex gap-4">
+                            <input type="text" 
+                                  id="searchInput"
+                                  placeholder="Oyun ara..." 
+                                  class="flex-1 rounded-md px-4 py-2 text-white">
+                            <button id="searchButton"
+                                    class="search-button rounded-md px-6 py-2 text-gray-200">
+                                Ara
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    <div class="stats-card rounded-lg p-6 delay-1">
+                        <div class="text-2xl font-bold text-blue-400">25</div>
+                        <div class="mt-2 text-sm text-gray-300">Toplam Oyun</div>
+                    </div>
+                    <div class="stats-card rounded-lg p-6 delay-2">
+                        <div class="text-2xl font-bold text-purple-400">97</div>
+                        <div class="mt-2 text-sm text-gray-300">En Yüksek Puan</div>
+                    </div>
+                    <div class="stats-card rounded-lg p-6 delay-3">
+                        <div class="text-2xl font-bold text-green-400">15</div>
+                        <div class="mt-2 text-sm text-gray-300">Kullanıcı</div>
+                    </div>
+                    <div class="stats-card rounded-lg p-6 delay-4">
+                        <div class="text-2xl font-bold text-pink-400">120</div>
+                        <div class="mt-2 text-sm text-gray-300">Yorum</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <h2 class="text-3xl font-bold mb-6">Son Eklenen Oyunlar</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card rounded-lg p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold text-white">Cyberpunk 2077</h3>
+                        <span class="score-badge score-good">4.2</span>
+                    </div>
+                    <div class="mt-4">
+                        <img src="https://via.placeholder.com/400x225" alt="Cyberpunk 2077" class="w-full h-48 object-cover rounded-lg">
+                    </div>
+                    <div class="mt-4 text-sm text-gray-300">
+                        <p>Türler: RPG, Aksiyon, Açık Dünya</p>
+                        <p>Toplam Oynama Süresi: 125 saat</p>
+                        <p>Puanlama ve Yorum: Açık</p>
+                    </div>
+                    <a href="#" class="mt-4 inline-block text-blue-400 hover:text-blue-300 transition">
+                        Detayları Gör →
+                    </a>
+                </div>
+                
+                <div class="glass-card rounded-lg p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold text-white">Elden Ring</h3>
+                        <span class="score-badge score-excellent">4.8</span>
+                    </div>
+                    <div class="mt-4">
+                        <img src="https://via.placeholder.com/400x225" alt="Elden Ring" class="w-full h-48 object-cover rounded-lg">
+                    </div>
+                    <div class="mt-4 text-sm text-gray-300">
+                        <p>Türler: Soulslike, RPG, Açık Dünya</p>
+                        <p>Toplam Oynama Süresi: 230 saat</p>
+                        <p>Puanlama ve Yorum: Açık</p>
+                    </div>
+                    <a href="#" class="mt-4 inline-block text-blue-400 hover:text-blue-300 transition">
+                        Detayları Gör →
+                    </a>
+                </div>
+                
+                <div class="glass-card rounded-lg p-6">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold text-white">The Witcher 3</h3>
+                        <span class="score-badge score-excellent">4.9</span>
+                    </div>
+                    <div class="mt-4">
+                        <img src="https://via.placeholder.com/400x225" alt="The Witcher 3" class="w-full h-48 object-cover rounded-lg">
+                    </div>
+                    <div class="mt-4 text-sm text-gray-300">
+                        <p>Türler: RPG, Açık Dünya, Macera</p>
+                        <p>Toplam Oynama Süresi: 310 saat</p>
+                        <p>Puanlama ve Yorum: Açık</p>
+                    </div>
+                    <a href="#" class="mt-4 inline-block text-blue-400 hover:text-blue-300 transition">
+                        Detayları Gör →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="glass-effect mt-12">
+        <div class="max-w-7xl mx-auto py-12 px-4">
+            <p class="text-center text-gray-400">
+                &copy; 2025 Video Game Distribution Service. Tüm hakları saklıdır.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function showFadeInElements() {
+                const elements = document.querySelectorAll('.fade-in-element');
+                elements.forEach((element, index) => {
+                    setTimeout(() => {
+                        element.classList.add('visible');
+                    }, 200 * index);
+                });
+            }
+
+            showFadeInElements();
+
+            const cards = document.querySelectorAll('.glass-card');
+            
+            function showCards() {
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.classList.add('show');
+                    }, 100 * index);
+                });
+            }
+
+            showCards();
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('show');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '50px'
+            });
+
+            cards.forEach(card => {
+                cardObserver.observe(card);
+            });
+
+            document.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    if (this.href.includes(window.location.origin)) {
+                        e.preventDefault();
+                        document.body.style.animation = 'fadeOut 0.5s ease-out forwards';
+                        setTimeout(() => {
+                            window.location = this.href;
+                        }, 500);
+                    }
+                });
+            });
+
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                if (currentPath === '/' && link.dataset.page === 'home') {
+                    link.classList.add('active');
+                } else if (currentPath.includes(link.dataset.page)) {
+                    link.classList.add('active');
+                }
+            });
+
+            const searchInput = document.getElementById('searchInput');
+            const searchButton = document.getElementById('searchButton');
+
+            function performSearch() {
+                const searchTerm = searchInput.value.toLowerCase();
+                
+                console.log("Aranan terim:", searchTerm);
+            }
+
+            if (searchInput && searchButton) {
+                searchButton.addEventListener('click', performSearch);
+                
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performSearch();
+                    }
+                });
+            }
+
+            const scoreColors = {
+                excellent: { min: 80, color: 'score-excellent' },
+                good: { min: 60, color: 'score-good' },
+                average: { min: 40, color: 'score-average' },
+                poor: { min: 0, color: 'score-poor' }
+            };
+
+            document.querySelectorAll('.score-badge').forEach(badge => {
+                const score = parseFloat(badge.textContent || 0);
+                
+                for (const [key, value] of Object.entries(scoreColors)) {
+                    if (score >= value.min / 20) { // 5 üzerinden değerlendirme için ayarlama
+                        badge.classList.add(value.color);
+                        break;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
