@@ -1,570 +1,1037 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oyunlar - Video Game Distribution Service</title>
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/game.png') }}">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>GameHub - Games Catalog</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-        
-        /* Sayfa fade animasyonları */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        :root {
+            --primary-color: #222222;
+            --secondary-color: #444444;
+            --dark-color: #000000;
+            --light-color: #f5f5f5;
+            --gray-color: #e0e0e0;
+            --danger-color: #d32f2f;
+            --success-color: #4caf50;
+            --accent-color: #888888;
         }
 
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-                transform: translateY(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
-            min-height: 100vh;
-            opacity: 0;
-            animation: fadeIn 1s ease-out forwards;
+            background-color: #000000;
+            color: #ffffff;
         }
 
-        .fade-in-element {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease-out;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        .fade-in-element.visible {
-            opacity: 1;
-            transform: translateY(0);
+        header {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
-        .header-glass {
-            background: rgba(2, 6, 23, 0.85); /* Daha koyu ve opak arka plan */
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s ease;
-            opacity: 0;
-            transform: translateY(30px);
+        .logo i {
+            margin-right: 10px;
+            font-size: 28px;
         }
 
-        .glass-card.show {
-            opacity: 1;
-            transform: translateY(0);
+        .nav-links {
+            display: flex;
+            gap: 20px;
         }
 
-        .glass-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.25);
-            background: rgba(255, 255, 255, 0.12);
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
         }
 
-        .delay-1 { animation-delay: 0.2s; }
-        .delay-2 { animation-delay: 0.4s; }
-        .delay-3 { animation-delay: 0.6s; }
-        .delay-4 { animation-delay: 0.8s; }
-
-        select option {
-            background-color: #0f172a;
-            color: #e5e7eb;
+        .nav-links a:hover {
+            background-color: #333333;
         }
         
-        select option:checked {
-            background-color: #1e293b;
+        .nav-links a.active {
+            background-color: #444444;
         }
 
-        select, input[type="text"] {
-            background-color: rgba(15, 23, 42, 0.6) !important;
-            border-color: rgba(255, 255, 255, 0.1) !important;
-            transition: all 0.3s ease;
-        }
-
-        select:hover, select:focus,
-        input[type="text"]:hover, input[type="text"]:focus {
-            background-color: rgba(15, 23, 42, 0.8) !important;
-            border-color: rgba(255, 255, 255, 0.2) !important;
-            outline: none !important;
-            transform: translateY(-2px);
-        }
-
-        .score-badge {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .score-badge:hover {
-            transform: scale(1.1);
-        }
-
-        .score-excellent {
-            background: rgba(34, 197, 94, 0.2);
-            color: rgb(134, 239, 172);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-        }
-
-        .score-good {
-            background: rgba(234, 179, 8, 0.2);
-            color: rgb(253, 224, 71);
-            border: 1px solid rgba(234, 179, 8, 0.3);
-        }
-
-        .score-average {
-            background: rgba(249, 115, 22, 0.2);
-            color: rgb(253, 186, 116);
-            border: 1px solid rgba(249, 115, 22, 0.3);
-        }
-
-        .score-poor {
-            background: rgba(239, 68, 68, 0.2);
-            color: rgb(252, 165, 165);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-        }
-
-        .nav-link {
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            transform: translateY(-2px);
-            background-color: rgba(255, 255, 255, 0.1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.15);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        a {
-            transition: all 0.3s ease;
-        }
-
-        a:hover {
-            text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
-        }
-
-        .btn {
-            transition: all 0.3s ease;
+        .page-title {
+            text-align: center;
+            margin: 30px 0;
+            color: #ffffff;
+            font-size: 36px;
+            font-weight: 700;
             position: relative;
+            padding-bottom: 15px;
+        }
+
+        .page-title:after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background-color: #444444;
+        }
+
+        .games-filter {
+            background-color: #111111;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.05);
+        }
+
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cccccc;
+            font-weight: 500;
+        }
+
+        .filter-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #333333;
+            border-radius: 5px;
+            background-color: #222222;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background-color: #333333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            background-color: #444444;
+            transform: translateY(-2px);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .game-card {
+            background-color: #111111;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .game-thumbnail {
+            position: relative;
+            height: 200px;
             overflow: hidden;
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 300%;
-            height: 300%;
-            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
-            transform: translate(-50%, -50%) scale(0);
+        .game-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             transition: transform 0.5s;
         }
 
-        .btn:hover::after {
-            transform: translate(-50%, -50%) scale(1);
+        .game-card:hover .game-thumbnail img {
+            transform: scale(1.1);
+        }
+
+        .game-rating {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #ffca28;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .game-info {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .game-meta {
+            margin-bottom: 15px;
+            color: #aaaaaa;
+            font-size: 14px;
+        }
+
+        .game-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .genre-tag {
+            background-color: #333333;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid #333333;
+        }
+
+        .game-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #aaaaaa;
+        }
+
+        .view-details-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
+            background-color: #333333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .view-details-btn:hover {
+            background-color: #444444;
+        }
+
+        /* Game Details Page Styles */
+        .game-details {
+            background-color: #111111;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-banner {
+            position: relative;
+            height: 400px;
+        }
+
+        .game-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .game-banner-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+            padding: 40px 30px 30px;
+        }
+
+        .game-banner-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .game-banner-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            color: #cccccc;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .meta-item i {
+            color: #aaaaaa;
+        }
+
+        .game-content {
+            padding: 30px;
+        }
+
+        .game-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #ffffff;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .game-attributes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .attribute-card {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .attribute-name {
+            font-size: 14px;
+            color: #aaaaaa;
+            margin-bottom: 5px;
+        }
+
+        .attribute-value {
+            font-size: 16px;
+            color: #ffffff;
+        }
+
+        .comments-section {
+            margin-top: 40px;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .comment-card {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333333;
+        }
+
+        .comment-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #333333;
+            color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .comment-meta {
+            color: #aaaaaa;
+            font-size: 14px;
+        }
+
+        .comment-content {
+            color: #dddddd;
+            line-height: 1.6;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 40px 0;
+        }
+
+        .page-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .page-link.active {
+            background-color: #333333;
+            font-weight: bold;
+        }
+
+        .page-link:hover {
+            background-color: #333333;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            margin-top: 40px;
+            background-color: #000000;
+            color: white;
+            padding: 30px 0;
+            border-top: 5px solid #333;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .copyright {
+            font-size: 14px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 18px;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--secondary-color);
+        }
+
+        @media (max-width: 768px) {
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .game-banner {
+                height: 300px;
+            }
+
+            .game-banner-title {
+                font-size: 32px;
+            }
+
+            .game-attributes {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
         }
     </style>
 </head>
-<body class="text-white">
-    <nav class="header-glass sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <a href="/" class="font-bold text-xl">Video Game Distribution</a>
-                </div>
-                <div class="flex space-x-4">
-                    <a href="/" class="nav-link px-3 py-2 rounded-md text-sm font-medium transition" data-page="home">Ana Sayfa</a>
-                    <a href="/games" class="nav-link px-3 py-2 rounded-md text-sm font-medium transition active" data-page="games">Oyunlar</a>
-                    <a href="/user" class="nav-link px-3 py-2 rounded-md text-sm font-medium transition" data-page="user">Profil</a>
-                </div>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                <span>GameHub</span>
+            </div>
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="#" class="active">Games</a>
+                <a href="user_page.html">Profile</a>
             </div>
         </div>
-    </nav>
+    </header>
 
-    <div class="container mx-auto px-4 py-8">
-        <div class="glass-effect mt-4 rounded-lg fade-in-element visible">
-            <div class="py-8 px-6">
-                <div class="text-center">
-                    <h1 class="text-3xl font-bold text-white">Tüm Oyunlar</h1>
-                    <p class="mt-2 text-lg text-gray-300">
-                        Oyunları filtreleyebilir ve detaylı bilgilere ulaşabilirsiniz
-                    </p>
-                </div>
-            </div>
-        </div>
+    <main class="container">
+        <h1 class="page-title">Games Catalog</h1>
 
-        <div class="glass-effect mt-6 rounded-lg p-6 fade-in-element visible">
-            <div class="flex flex-wrap gap-4">
-                <div class="flex-1 min-w-[200px]">
-                    <label for="search" class="block text-sm font-medium text-gray-300 mb-1">Arama</label>
-                    <input type="text" name="search" id="search" value=""
-                        class="block w-full rounded-md px-3 py-2 text-white"
-                        placeholder="İsme göre ara...">
+      
+        <div class="games-filter">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label class="filter-label" for="search">Search</label>
+                    <input type="text" id="search" class="filter-control" placeholder="Search games...">
                 </div>
-                <div class="flex-1 min-w-[200px]">
-                    <label for="genre" class="block text-sm font-medium text-gray-300 mb-1">Tür</label>
-                    <select name="genre" id="genre" class="block w-full rounded-md px-3 py-2 text-white">
-                        <option value="">Tüm Türler</option>
-                        <option value="action">Aksiyon</option>
-                        <option value="adventure">Macera</option>
+                <div class="filter-group">
+                    <label class="filter-label" for="genre">Genre</label>
+                    <select id="genre" class="filter-control">
+                        <option value="">All Genres</option>
+                        <option value="action">Action</option>
+                        <option value="adventure">Adventure</option>
                         <option value="rpg">RPG</option>
-                        <option value="strategy">Strateji</option>
-                        <option value="simulation">Simülasyon</option>
+                        <option value="shooter">Shooter</option>
+                        <option value="sports">Sports</option>
+                        <option value="strategy">Strategy</option>
+                        <option value="survival">Survival</option>
                     </select>
                 </div>
-                <div class="flex-1 min-w-[200px]">
-                    <label for="sort" class="block text-sm font-medium text-gray-300 mb-1">Sıralama</label>
-                    <select name="sort" id="sort" class="block w-full rounded-md px-3 py-2 text-white">
-                        <option value="name">İsme Göre</option>
-                        <option value="rating" selected>Puana Göre</option>
-                        <option value="play_time">Oynama Süresine Göre</option>
+                <div class="filter-group">
+                    <label class="filter-label" for="sort">Sort By</label>
+                    <select id="sort" class="filter-control">
+                        <option value="rating">Rating (High to Low)</option>
+                        <option value="play_time">Play Time (High to Low)</option>
+                        <option value="name">Name (A to Z)</option>
+                        <option value="comments">Most Commented</option>
                     </select>
                 </div>
-                <div class="flex items-end">
-                    <button type="button" id="filterButton" class="btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded">
-                        Filtreleri Uygula
-                    </button>
+                <button class="filter-btn">Apply Filters</button>
+            </div>
+        </div>
+
+        
+        <div class="games-grid">
+         
+            <div class="game-card">
+                <div class="game-thumbnail">
+                    <img src="https://i.imgur.com/WwQ6HtU.jpg" alt="Red Dead Redemption 2">
+                    <div class="game-rating">
+                        <i class="fas fa-star"></i> 4.9
+                    </div>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">Red Dead Redemption 2</h3>
+                    <div class="game-genres">
+                        <span class="genre-tag">Action</span>
+                        <span class="genre-tag">Adventure</span>
+                        <span class="genre-tag">Open World</span>
+                    </div>
+                    <div class="game-meta">
+                        <div><strong>Developer:</strong> Rockstar Games</div>
+                        <div><strong>Release Date:</strong> October 26, 2018</div>
+                    </div>
+                    <div class="game-stats">
+                        <div class="game-stat">
+                            <div class="stat-value">412h</div>
+                            <div class="stat-label">Play Time</div>
+                        </div>
+                        <div class="game-stat">
+                            <div class="stat-value">32</div>
+                            <div class="stat-label">Comments</div>
+                        </div>
+                    </div>
+                    <a href="#red-dead-redemption-2" class="view-details-btn" onclick="showGameDetails('rdr2')">View Details</a>
+                </div>
+            </div>
+
+            
+            <div class="game-card">
+                <div class="game-thumbnail">
+                    <img src="https://i.imgur.com/FoLEYDE.jpg" alt="Grand Theft Auto V">
+                    <div class="game-rating">
+                        <i class="fas fa-star"></i> 4.8
+                    </div>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">Grand Theft Auto V</h3>
+                    <div class="game-genres">
+                        <span class="genre-tag">Action</span>
+                        <span class="genre-tag">Open World</span>
+                        <span class="genre-tag">Crime</span>
+                    </div>
+                    <div class="game-meta">
+                        <div><strong>Developer:</strong> Rockstar Games</div>
+                        <div><strong>Release Date:</strong> September 17, 2013</div>
+                    </div>
+                    <div class="game-stats">
+                        <div class="game-stat">
+                            <div class="stat-value">536h</div>
+                            <div class="stat-label">Play Time</div>
+                        </div>
+                        <div class="game-stat">
+                            <div class="stat-value">47</div>
+                            <div class="stat-label">Comments</div>
+                        </div>
+                    </div>
+                    <a href="#grand-theft-auto-v" class="view-details-btn" onclick="showGameDetails('gtav')">View Details</a>
+                </div>
+            </div>
+
+          
+            <div class="game-card">
+                <div class="game-thumbnail">
+                    <img src="https://i.imgur.com/vz4Rh7o.jpg" alt="Days Gone">
+                    <div class="game-rating">
+                        <i class="fas fa-star"></i> 4.5
+                    </div>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">Days Gone</h3>
+                    <div class="game-genres">
+                        <span class="genre-tag">Action</span>
+                        <span class="genre-tag">Adventure</span>
+                        <span class="genre-tag">Survival</span>
+                    </div>
+                    <div class="game-meta">
+                        <div><strong>Developer:</strong> Bend Studio</div>
+                        <div><strong>Release Date:</strong> April 26, 2019</div>
+                    </div>
+                    <div class="game-stats">
+                        <div class="game-stat">
+                            <div class="stat-value">287h</div>
+                            <div class="stat-label">Play Time</div>
+                        </div>
+                        <div class="game-stat">
+                            <div class="stat-value">19</div>
+                            <div class="stat-label">Comments</div>
+                        </div>
+                    </div>
+                    <a href="#days-gone" class="view-details-btn" onclick="showGameDetails('daysgone')">View Details</a>
                 </div>
             </div>
         </div>
 
-        <!-- Games Grid -->
-        <div class="mt-8">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="glass-card rounded-lg overflow-hidden show">
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://via.placeholder.com/400x225" alt="Cyberpunk 2077" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="text-xl font-bold text-white">Cyberpunk 2077</h3>
-                            <span class="score-badge score-good">4.2</span>
+        
+        <div id="rdr2" class="game-details" style="display: none;">
+            <div class="game-banner">
+                <img src="https://i.imgur.com/WwQ6HtU.jpg" alt="Red Dead Redemption 2">
+                <div class="game-banner-overlay">
+                    <h1 class="game-banner-title">Red Dead Redemption 2</h1>
+                    <div class="game-banner-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-star"></i>
+                            <span>4.9 / 5</span>
                         </div>
-                        <div class="text-sm text-gray-300 space-y-2">
-                            <p><span class="text-gray-400">Türler:</span> RPG, Aksiyon, Açık Dünya</p>
-                            <p><span class="text-gray-400">Toplam Oynama Süresi:</span> 125 saat</p>
-                            <p><span class="text-gray-400">Çıkış Tarihi:</span> 2020-12-10</p>
-                            <p><span class="text-gray-400">Geliştirici:</span> CD Projekt RED</p>
-                            <p class="text-green-400">
-                                Puanlama ve Yorum Açık
-                            </p>
+                        
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>412 hours played</span>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-gray-700 flex space-x-2">
-                            <a href="#" class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Detayları Gör
-                            </a>
-                            <a href="#" class="btn flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Oyunu Oyna
-                            </a>
+                        <div class="meta-item">
+                            <i class="fas fa-comment"></i>
+                            <span>32 comments</span>
                         </div>
                     </div>
                 </div>
-                
-                <div class="glass-card rounded-lg overflow-hidden show">
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://via.placeholder.com/400x225" alt="Elden Ring" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="text-xl font-bold text-white">Elden Ring</h3>
-                            <span class="score-badge score-excellent">4.8</span>
+            </div>
+
+            <div class="game-content">
+                <div class="game-section">
+                    <h2 class="section-title">Game Information</h2>
+                    <div class="game-attributes">
+                        <div class="attribute-card">
+                            <div class="attribute-name">Genre(s)</div>
+                            <div class="attribute-value">Action, Adventure, Open World</div>
                         </div>
-                        <div class="text-sm text-gray-300 space-y-2">
-                            <p><span class="text-gray-400">Türler:</span> Soulslike, RPG, Açık Dünya</p>
-                            <p><span class="text-gray-400">Toplam Oynama Süresi:</span> 230 saat</p>
-                            <p><span class="text-gray-400">Çıkış Tarihi:</span> 2022-02-25</p>
-                            <p><span class="text-gray-400">Geliştirici:</span> FromSoftware</p>
-                            <p class="text-green-400">
-                                Puanlama ve Yorum Açık
-                            </p>
+                        <div class="attribute-card">
+                            <div class="attribute-name">Developer</div>
+                            <div class="attribute-value">Rockstar Games</div>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-gray-700 flex space-x-2">
-                            <a href="#" class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Detayları Gör
-                            </a>
-                            <a href="#" class="btn flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Oyunu Oyna
-                            </a>
+                        <div class="attribute-card">
+                            <div class="attribute-name">Release Date</div>
+                            <div class="attribute-value">October 26, 2018</div>
+                        </div>
+                        <div class="attribute-card">
+                            <div class="attribute-name">Total Play Time</div>
+                            <div class="attribute-value">412 hours</div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Oyun Kartı 3 -->
-                <div class="glass-card rounded-lg overflow-hidden show">
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://via.placeholder.com/400x225" alt="The Witcher 3" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="text-xl font-bold text-white">The Witcher 3</h3>
-                            <span class="score-badge score-excellent">4.9</span>
+
+                <div class="comments-section">
+                    <h2 class="section-title">All Comments (32)</h2>
+                    <div class="comments-list">
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-user">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="user-name">Metehan</div>
+                                </div>
+                                <div class="comment-meta">
+                                    <div>Play Time: 78 hours</div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                La gardaş harbi manyak oyun
+                            </div>
                         </div>
-                        <div class="text-sm text-gray-300 space-y-2">
-                            <p><span class="text-gray-400">Türler:</span> RPG, Açık Dünya, Macera</p>
-                            <p><span class="text-gray-400">Toplam Oynama Süresi:</span> 310 saat</p>
-                            <p><span class="text-gray-400">Çıkış Tarihi:</span> 2015-05-19</p>
-                            <p><span class="text-gray-400">Geliştirici:</span> CD Projekt RED</p>
-                            <p class="text-green-400">
-                                Puanlama ve Yorum Açık
-                            </p>
+
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-user">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="user-name">Ertuğrul</div>
+                                </div>
+                                <div class="comment-meta">
+                                    <div>Play Time: 65 hours</div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                Yapacağınız oyunu atın üstündü geçer mi la vakit
+                            </div>
                         </div>
-                        <div class="mt-4 pt-3 border-t border-gray-700 flex space-x-2">
-                            <a href="#" class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Detayları Gör
-                            </a>
-                            <a href="#" class="btn flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Oyunu Oyna
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Oyun Kartı 4 -->
-                <div class="glass-card rounded-lg overflow-hidden show">
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://via.placeholder.com/400x225" alt="Red Dead Redemption 2" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="text-xl font-bold text-white">Red Dead Redemption 2</h3>
-                            <span class="score-badge score-excellent">4.7</span>
-                        </div>
-                        <div class="text-sm text-gray-300 space-y-2">
-                            <p><span class="text-gray-400">Türler:</span> Aksiyon, Açık Dünya, Macera</p>
-                            <p><span class="text-gray-400">Toplam Oynama Süresi:</span> 285 saat</p>
-                            <p><span class="text-gray-400">Çıkış Tarihi:</span> 2018-10-26</p>
-                            <p><span class="text-gray-400">Geliştirici:</span> Rockstar Games</p>
-                            <p class="text-green-400">
-                                Puanlama ve Yorum Açık
-                            </p>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-gray-700 flex space-x-2">
-                            <a href="#" class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Detayları Gör
-                            </a>
-                            <a href="#" class="btn flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Oyunu Oyna
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Oyun Kartı 5 -->
-                <div class="glass-card rounded-lg overflow-hidden show">
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://via.placeholder.com/400x225" alt="God of War" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="text-xl font-bold text-white">God of War</h3>
-                            <span class="score-badge score-excellent">4.8</span>
-                        </div>
-                        <div class="text-sm text-gray-300 space-y-2">
-                            <p><span class="text-gray-400">Türler:</span> Aksiyon, Macera</p>
-                            <p><span class="text-gray-400">Toplam Oynama Süresi:</span> 195 saat</p>
-                            <p><span class="text-gray-400">Çıkış Tarihi:</span> 2018-04-20</p>
-                            <p><span class="text-gray-400">Geliştirici:</span> Santa Monica Studio</p>
-                            <p class="text-green-400">
-                                Puanlama ve Yorum Açık
-                            </p>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-gray-700 flex space-x-2">
-                            <a href="#" class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Detayları Gör
-                            </a>
-                            <a href="#" class="btn flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Oyunu Oyna
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Oyun Kartı 6 -->
-                <div class="glass-card rounded-lg overflow-hidden show">
-                    <div class="h-48 overflow-hidden">
-                        <img src="https://via.placeholder.com/400x225" alt="Horizon Zero Dawn" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-3">
-                            <h3 class="text-xl font-bold text-white">Horizon Zero Dawn</h3>
-                            <span class="score-badge score-good">4.5</span>
-                        </div>
-                        <div class="text-sm text-gray-300 space-y-2">
-                            <p><span class="text-gray-400">Türler:</span> Aksiyon, RPG, Açık Dünya</p>
-                            <p><span class="text-gray-400">Toplam Oynama Süresi:</span> 175 saat</p>
-                            <p><span class="text-gray-400">Çıkış Tarihi:</span> 2017-02-28</p>
-                            <p><span class="text-gray-400">Geliştirici:</span> Guerrilla Games</p>
-                            <p class="text-green-400">
-                                Puanlama ve Yorum Açık
-                            </p>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-gray-700 flex space-x-2">
-                            <a href="#" class="btn flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Detayları Gör
-                            </a>
-                            <a href="#" class="btn flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-3 rounded text-center">
-                                Oyunu Oyna
-                            </a>
+
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-user">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="user-name">EpicPlayer</div>
+                                </div>
+                                <div class="comment-meta">
+                                    <div>Play Time: 45 hours</div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                The story is emotionally powerful and Arthur Morgan is one of the best-written characters in any video game. The world feels alive and responsive to your actions, making every playthrough unique.
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Alt Bilgi -->
-    <footer class="glass-effect mt-12">
-        <div class="max-w-7xl mx-auto py-12 px-4">
-            <p class="text-center text-gray-400">
-                &copy; 2025 Video Game Distribution Service. Tüm hakları saklıdır.
-            </p>
+        <div id="gtav" class="game-details" style="display: none;">
+            <div class="game-banner">
+                <img src="https://i.imgur.com/FoLEYDE.jpg" alt="Grand Theft Auto V">
+                <div class="game-banner-overlay">
+                    <h1 class="game-banner-title">Grand Theft Auto V</h1>
+                    <div class="game-banner-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-star"></i>
+                            <span>4.8 / 5</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>536 hours played</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-comment"></i>
+                            <span>47 comments</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="game-content">
+                <div class="game-section">
+                    <h2 class="section-title">Game Information</h2>
+                    <div class="game-attributes">
+                        <div class="attribute-card">
+                            <div class="attribute-name">Genre(s)</div>
+                            <div class="attribute-value">Action, Open World, Crime</div>
+                        </div>
+                        <div class="attribute-card">
+                            <div class="attribute-name">Developer</div>
+                            <div class="attribute-value">Rockstar Games</div>
+                        </div>
+                        <div class="attribute-card">
+                            <div class="attribute-name">Release Date</div>
+                            <div class="attribute-value">September 17, 2013</div>
+                        </div>
+                        <div class="attribute-card">
+                            <div class="attribute-name">Total Play Time</div>
+                            <div class="attribute-value">536 hours</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="comments-section">
+                    <h2 class="section-title">All Comments (47)</h2>
+                    <div class="comments-list">
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-user">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="user-name">EpicPlayer</div>
+                                </div>
+                                <div class="comment-meta">
+                                    <div>Play Time: 120 hours</div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                Even after all these years, GTA V remains one of the most entertaining open-world games. The three protagonist system was a brilliant innovation that allowed for a more dynamic story.
+                            </div>
+                        </div>
+
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-user">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="user-name">GameMaster</div>
+                                </div>
+                                <div class="comment-meta">
+                                    <div>Play Time: 85 hours</div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                Los Santos is such a well-realized city, with incredible attention to detail. From the downtown skyscrapers to the rural backroads, every area feels unique and carefully crafted.
+                            </div>
+                        </div>
+
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-user">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="user-name">GamerPro92</div>
+                                </div>
+                                <div class="comment-meta">
+                                    <div>Play Time: 45 hours</div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                Great open world with lots to do. The three protagonist system works really well, and the heists are fun to plan and execute. GTA Online continues to be supported with new content as well.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            function showFadeInElements() {
-                const elements = document.querySelectorAll('.fade-in-element');
-                elements.forEach((element, index) => {
-                    setTimeout(() => {
-                        element.classList.add('visible');
-                    }, 200 * index);
-                });
-            }
-            showFadeInElements();
+      
+        <div id="daysgone" class="game-details" style="display: none;">
+            <div class="game-banner">
+                <img src="https://i.imgur.com/vz4Rh7o.jpg" alt="Days Gone">
+                <div class="game-banner-overlay">
+                    <h1 class="game-banner-title">Days Gone</h1>
+                    <div class="game-banner-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-star"></i>
+                            <span>4.5 / 5</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-clock"></i>
+                            <span>287 hours played</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-comment"></i>
+                            <span>19 comments</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            const cards = document.querySelectorAll('.glass-card');
-            
-            function showCards() {
-                cards.forEach((card, index) => {
-                    setTimeout(() => {
-                        card.classList.add('show');
-                    }, 100 * index);
-                });
-            }
-            showCards();
+            <div class="game-content">
+                <div class="game-section">
+                    <h2 class="section-title">Game Information</h2>
+                    <div class="game-attributes">
+                        <div class="attribute-card">
+                            <div class="attribute-name">Genre(s)</div>
+                            <div class="attribute-value">Action, Adventure, Survival</div>
+                        </div>
+                        <div class="attribute-card">
+                            <div class="attribute-name">Developer</div>
+                            <div class="attribute-value">Bend Studio</div>
+                        </div>
+                        <div class="attribute-card">
+                            <div class="attribute-name">Release Date</div>
+                            <div class="attribute-value">April 26, 2019</div>
+                        </div>
+                        <div class="attribute-card">
+                            <div class="attribute-name">Total Play Time</div>
+                            <div class="attribute-value">287 hours</div>
+                        </div>
+                    </div>
+                </div>
 
-            const searchInput = document.getElementById('search');
-            const genreSelect = document.getElementById('genre');
-            const sortSelect = document.getElementById('sort');
-            const filterButton = document.getElementById('filterButton');
-            
-            function filterGames() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const selectedGenre = genreSelect.value.toLowerCase();
-                
-                cards.forEach(card => {
-                    const title = card.querySelector('h3').textContent.toLowerCase();
-                    const genres = card.querySelector('p:nth-child(1)').textContent.toLowerCase();
-                    
-                    const matchesSearch = title.includes(searchTerm);
-                    const matchesGenre = selectedGenre === '' || genres.includes(selectedGenre);
-                    
-                    if (matchesSearch && matchesGenre) {
-                        card.style.display = 'block';
-                        setTimeout(() => {
-                            card.classList.add('show');
-                        }, 100);
-                    } else {
-                        card.style.display = 'none';
-                        card.classList.remove('show');
-                    }
-                });
-            }
-            
-            function sortGames() {
-                const sortOption = sortSelect.value;
-                const cardsArray = Array.from(cards);
-                
-                cardsArray.sort((a, b) => {
-                    if (sortOption === 'name') {
-                        const nameA = a.querySelector('h3').textContent;
-                        const nameB = b.querySelector('h3').textContent;
-                        return nameA.localeCompare(nameB);
-                    } else if (sortOption === 'rating') {
-                        const ratingA = parseFloat(a.querySelector('.score-badge').textContent);
-                        const ratingB = parseFloat(b.querySelector('.score-badge').textContent);
-                        return ratingB - ratingA; // Yüksekten düşüğe sıralama
-                    } else if (sortOption === 'play_time') {
-                        const timeTextA = a.querySelector('p:nth-child(2)').textContent;
-                        const timeTextB = b.querySelector('p:nth-child(2)').textContent;
-                        const timeA = parseInt(timeTextA.match(/\d+/)[0]);
-                        const timeB = parseInt(timeTextB.match(/\d+/)[0]);
-                        return timeB - timeA; // Yüksekten düşüğe sıralama
-                    }
-                });
-                
-                const container = document.querySelector('.grid');
-                container.innerHTML = '';
-                cardsArray.forEach(card => container.appendChild(card));
-                showCards();
-            }
-            
-            filterButton.addEventListener('click', function() {
-                filterGames();
-                sortGames();
-            });
-            
-            setTimeout(() => {
-                sortGames();
-            }, 100);
-            
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    filterGames();
-                    sortGames();
-                }
-            });
-            
-            document.querySelectorAll('a').forEach(link => {
-                if (link.href && link.href.includes(window.location.origin)) {
-                    link.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        document.body.style.animation = 'fadeOut 0.5s ease-out forwards';
-                        setTimeout(() => {
-                            window.location = this.href;
-                        }, 500);
-                    });
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+                <div class="comments-section">
+                    <h2 class="section-title">All Comments (19)</h2>
+                    <div class="comments-list">
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-user">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="user-name">BikerFan</div>
+                                </div>
+                                <div class="comment-meta">
+                                    <div>Play Time: 92 hours</div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                The motorcycle gameplay is amazing in this game. Riding through the post-apocalyptic Oregon wilderness feels incredibly immersive.
+                            </div>
+                        </div>
+
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-user">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="user-name">SurvivorPro</div>
+                                </div>
+                                <div class="comment-meta">
+                                    <div>Play Time: 76 hours</div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                The hordes are the best part of this game. Nothing beats the adrenaline rush of having hundreds of freakers chasing you through abandoned buildings.
+                            </div>
+                        </div>
+
+                        <div class="comment-card">
+                            <div class="comment-header">
+                                <div class="comment-user">
+                                    <div class="user-avatar">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="user-name">GamerPro92</div>
+                                </div>
+                                <div class="comment-meta">
+                                    <div>Play Time: 45 hours</div>
+                                </div>
+                            </div>
+                            <div class="comment-content">
+                                Great open world with lots to do. The three protagonist system works really well, and the heists are fun to plan and execute. GTA Online continues to be supported with new content as well.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                            <script>
+                         
+                                function openModal(modalId) {
+                                    document.getElementById(modalId).style.display = 'block';
+                                }
+                            
+                                function closeModal(modalId) {
+                                    document.getElementById(modalId).style.display = 'none';
+                                }
+                            
+                                window.onclick = function(event) {
+                                    const modals = document.getElementsByClassName('modal');
+                                    for (let i = 0; i < modals.length; i++) {
+                                        if (event.target == modals[i]) {
+                                            modals[i].style.display = 'none';
+                                        }
+                                    }
+                                }
+                                
+                              
+                                function showGameDetails(gameId) {
+                                
+                                    const allDetails = document.querySelectorAll('.game-details');
+                                    allDetails.forEach(detail => {
+                                        detail.style.display = 'none';
+                                    });
+                                    
+                                  
+                                    const selectedGame = document.getElementById(gameId);
+                                    if (selectedGame) {
+                                        selectedGame.style.display = 'block';
+                                        
+                                   
+                                        selectedGame.scrollIntoView({ behavior: 'smooth' });
+                                    }
+                                    function hideGameDetails() {
+                                        const allDetails = document.querySelectorAll('.game-details');
+                                        allDetails.forEach(detail => {
+                                            detail.style.display = 'none';
+                                        });
+                                    }
+                                }
+                            </script>
+                          
