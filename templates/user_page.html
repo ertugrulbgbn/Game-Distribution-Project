@@ -3,30 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameHub - User Profile</title>
+    <title>GameWorld - User Profile</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #222222;
-            --secondary-color: #444444;
-            --dark-color: #000000;
-            --light-color: #f5f5f5;
-            --gray-color: #e0e0e0;
-            --danger-color: #d32f2f;
-            --success-color: #4caf50;
-            --accent-color: #888888;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes starHover {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            25% {
+                transform: rotate(5deg) scale(1.2);
+            }
+            50% {
+                transform: rotate(0deg) scale(1.3);
+            }
+            75% {
+                transform: rotate(-5deg) scale(1.2);
+            }
+            100% {
+                transform: rotate(0deg) scale(1);
+            }
+        }
+
+        @keyframes starActive {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.5);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         body {
-            background-color: #000000;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
             color: #ffffff;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        body.modal-open {
+            overflow: hidden;
         }
 
         .container {
@@ -35,61 +108,69 @@
             padding: 20px;
         }
 
-        header {
-            background-color: var(--dark-color);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        .header-glass {
+            background: #020617;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-        }
-
-        .logo i {
-            margin-right: 10px;
-            font-size: 28px;
         }
 
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 16px;
         }
 
-        .nav-links a {
+        .nav-link {
             color: white;
             text-decoration: none;
             font-weight: 500;
             padding: 8px 12px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
         }
 
-        .nav-links a:hover {
-            background-color: #333333;
+        .nav-link:hover {
+            transform: translateY(-2px);
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        
-        .nav-links a.active {
-            background-color: #444444;
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         /* User Profile Styles */
         .user-profile {
-            background-color: #111111;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
             border-radius: 10px;
             padding: 30px;
             margin: 30px 0;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
-            border-left: 5px solid #444444;
+            border-left: 4px solid rgba(99, 102, 241, 0.8);
+            animation: fadeIn 0.6s ease-out;
         }
 
         .user-header {
@@ -99,22 +180,26 @@
         }
 
         .user-avatar {
-            width: 80px;
-            height: 80px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
-            background-color: #333333;
+            background-color: rgba(99, 102, 241, 0.3);
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-right: 20px;
-            font-size: 32px;
+            margin-right: 25px;
+            font-size: 40px;
             color: #ffffff;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            animation: float 5s ease-in-out infinite;
+            border: 2px solid rgba(255, 255, 255, 0.1);
         }
 
         .user-info h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
+            font-size: 32px;
+            margin-bottom: 8px;
             color: #ffffff;
+            font-weight: 700;
         }
 
         .user-info p {
@@ -130,28 +215,40 @@
         }
 
         .stat-card {
-            background-color: #1a1a1a;
-            border-radius: 8px;
-            padding: 15px;
+            background-color: rgba(15, 23, 42, 0.6);
+            border-radius: 10px;
+            padding: 20px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
-            transition: transform 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .stat-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+            background-color: rgba(15, 23, 42, 0.8);
         }
 
         .stat-value {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #ffffff;
         }
 
         .stat-label {
             color: #aaaaaa;
             font-size: 14px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 20px;
+            border-left: 4px solid rgba(99, 102, 241, 0.8);
+            padding-left: 10px;
         }
 
         .action-buttons {
@@ -165,63 +262,86 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 12px;
-            background-color: #1a1a1a;
+            padding: 14px;
+            background-color: #2563eb;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
             transition: all 0.3s;
+            font-size: 15px;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
         }
 
         .action-btn:hover {
-            background-color: #333333;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            background-color: #1d4ed8;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .action-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s;
+        }
+
+        .action-btn:hover::after {
+            transform: translate(-50%, -50%) scale(1);
         }
 
         .action-btn i {
-            margin-right: 8px;
-        }
-
-        .section-title {
-            font-size: 22px;
-            color: #ffffff;
-            font-weight: 600;
-            margin-bottom: 20px;
-            border-left: 4px solid #444444;
-            padding-left: 10px;
+            margin-right: 10px;
+            font-size: 18px;
         }
 
         .comments-section {
-            margin-top: 30px;
+            margin-top: 40px;
+            margin-bottom: 40px; 
         }
 
         .comments-list {
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 20px;
         }
 
         .comment-card {
-            background-color: #1a1a1a;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05);
+            background-color: rgba(15, 23, 42, 0.6);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .comment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            background-color: rgba(15, 23, 42, 0.8);
         }
 
         .comment-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            align-items: center;
+            margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #333333;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .comment-game {
-            font-weight: bold;
+            font-weight: 600;
             color: #ffffff;
+            font-size: 17px;
         }
 
         .comment-meta {
@@ -230,8 +350,73 @@
         }
 
         .comment-text {
-            color: #dddddd;
-            line-height: 1.5;
+            color: #e5e7eb;
+            line-height: 1.6;
+        }
+
+        .game-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .game-card {
+            background-color: rgba(15, 23, 42, 0.6);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+            background-color: rgba(15, 23, 42, 0.8);
+        }
+
+        .game-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .game-card:hover .game-image {
+            transform: scale(1.05);
+        }
+
+        .game-details {
+            padding: 20px;
+        }
+
+        .game-title {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .game-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #aaaaaa;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .game-playtime {
+            font-weight: 600;
+            color: #ffffff;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .game-playtime i {
+            margin-right: 8px;
+            color: rgba(99, 102, 241, 0.8);
         }
 
         .modal {
@@ -243,31 +428,36 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.8);
             z-index: 1000;
+            animation: fadeIn 0.3s ease-out;
+            overflow-y: auto;
         }
 
         .modal-content {
-            position: absolute;
-            top: 50%;
+            position: fixed;
+            top: 50vh; /* Viewport height based positioning */
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: #111111;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
             padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             width: 90%;
             max-width: 500px;
-            border: 1px solid #333333;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: fadeIn 0.4s ease-out;
+            z-index: 1001;
         }
 
         .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .modal-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
             color: #ffffff;
         }
@@ -275,55 +465,74 @@
         .close-modal {
             background: none;
             border: none;
-            font-size: 22px;
+            font-size: 28px;
             cursor: pointer;
             color: #aaaaaa;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #ffffff;
+            transform: rotate(90deg);
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: 500;
-            color: #cccccc;
+            color: #e5e7eb;
+            font-size: 15px;
         }
 
         .form-control {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #333333;
-            border-radius: 5px;
-            font-size: 14px;
-            background-color: #222222;
-            color: #ffffff;
+            padding: 12px;
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            border: 2px solid rgba(99, 102, 241, 0.5) !important;
+            border-radius: 8px;
+            font-size: 15px;
+            color: #e5e7eb !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control:hover, .form-control:focus {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            border-color: rgba(99, 102, 241, 0.8) !important;
+            outline: none !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
         }
 
         select.form-control {
             appearance: none;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
-            background-position: right 10px center;
+            background-position: right 15px center;
             background-size: 15px;
         }
 
         textarea.form-control {
-            min-height: 100px;
+            min-height: 120px;
             resize: vertical;
         }
 
         .rating-group {
             display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            perspective: 1000px;
         }
 
         .rating-option {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            position: relative;
+            text-align: center;
+            transition: all 0.3s;
         }
 
         .rating-radio {
@@ -332,116 +541,54 @@
 
         .rating-label {
             cursor: pointer;
-            font-size: 24px;
+            font-size: 32px;
             color: #555555;
-            transition: color 0.3s;
-        }
-
-        .rating-radio:checked + .rating-label {
-            color: #ffca28;
+            transition: all 0.3s;
+            display: inline-block;
         }
 
         .rating-label:hover {
-            color: #ffca28;
+            color: #ffc107;
+            transform: scale(1.3);
+            animation: starHover 1s ease infinite;
+        }
+
+        .rating-radio:checked + .rating-label {
+            color: #ffc107;
+            animation: starActive 0.5s ease;
+            text-shadow: 0 0 15px rgba(255, 193, 7, 0.7);
         }
 
         .rating-value {
-            margin-top: 5px;
+            margin-top: 8px;
             color: #aaaaaa;
-            font-size: 12px;
+            font-size: 13px;
+            opacity: 0;
+            transition: all 0.3s;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            text-align: center;
+        }
+
+        .rating-option:hover .rating-value {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .modal-footer {
             display: flex;
             justify-content: flex-end;
-            gap: 10px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 25px;
         }
 
         .cancel-btn {
-            background-color: #333333;
-            color: #ffffff;
+            background-color: rgba(75, 85, 99, 0.8);
         }
 
-        footer {
-            margin-top: 40px;
-            background-color: #000000;
-            color: white;
-            padding: 30px 0;
-            border-top: 5px solid #333;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .copyright {
-            font-size: 14px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 18px;
-            transition: color 0.3s;
-        }
-
-        .social-links a:hover {
-            color: var(--secondary-color);
-        }
-
-        .game-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .game-card {
-            background-color: #1a1a1a;
-            border-radius: 8px;
-            overflow: hidden;
-            transition: transform 0.3s;
-        }
-
-        .game-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .game-image {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-        }
-
-        .game-details {
-            padding: 15px;
-        }
-
-        .game-title {
-            font-size: 18px;
-            margin-bottom: 5px;
-            color: #ffffff;
-        }
-
-        .game-meta {
-            display: flex;
-            justify-content: space-between;
-            color: #aaaaaa;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .game-playtime {
-            font-weight: bold;
-            color: #ffffff;
-            margin-top: 10px;
+        .cancel-btn:hover {
+            background-color: rgba(75, 85, 99, 1);
         }
 
         @media (max-width: 768px) {
@@ -456,28 +603,33 @@
 
             .user-avatar {
                 margin-right: 0;
-                margin-bottom: 15px;
+                margin-bottom: 20px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+                max-height: 90vh;
+                overflow-y: auto;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container header-content">
+    <header class="header-glass">
+        <div class="header-content">
             <div class="logo">
-                <i class="fas fa-gamepad"></i>
-                <span>GameHub</span>
+                <span>GameWorld</span>
             </div>
             <div class="nav-links">
-                <a href="home.html">Home</a>
-                <a href="#">Games</a>
-                <a href="#" class="active">Profile</a>
+                <a href="home.html" class="nav-link">Home</a>
+                <a href="games.html" class="nav-link">Games</a>
+                <a href="#" class="nav-link active">Profile</a>
             </div>
         </div>
     </header>
 
     <main class="container">
-     
         <section class="user-profile">
             <div class="user-header">
                 <div class="user-avatar">
@@ -489,7 +641,6 @@
                 </div>
             </div>
 
-           
             <div class="user-stats">
                 <div class="stat-card">
                     <div class="stat-value">4.3</div>
@@ -505,7 +656,6 @@
                 </div>
             </div>
 
-          
             <h2 class="section-title">Actions</h2>
             <div class="action-buttons">
                 <button class="action-btn" onclick="openModal('rateGameModal')">
@@ -517,8 +667,8 @@
                 <button class="action-btn" onclick="openModal('commentGameModal')">
                     <i class="fas fa-comment"></i> Comment on Game
                 </button>
-                <a href="#" class="action-btn">
-                    <i class="fas fa-gamepad"></i> Look Games
+                <a href="games.html" class="action-btn">
+                    <i class="fas fa-gamepad"></i> Browse Games
                 </a>
             </div>
         </section>
@@ -527,41 +677,46 @@
             <h2 class="section-title">My Games</h2>
             <div class="game-cards">
                 <div class="game-card">
-                    <img src="https://i.imgur.com/WwQ6HtU.jpg" alt="Red Dead Redemption 2" class="game-image">
+                    <img src="../static/img/RDR2.png" alt="Red Dead Redemption 2" class="game-image">
                     <div class="game-details">
                         <h3 class="game-title">Red Dead Redemption 2</h3>
                         <div class="game-meta">
                             <span>Action, Adventure</span>
                             <span>Rated: 5/5</span>
                         </div>
-                        <div class="game-playtime">Play Time: 78 hours</div>
+                        <div class="game-playtime">
+                            <i class="fas fa-clock"></i> Play Time: 78 hours
+                        </div>
                     </div>
                 </div>
                 <div class="game-card">
-                    <img src="https://i.imgur.com/FoLEYDE.jpg" alt="Grand Theft Auto V" class="game-image">
+                    <img src="../static/img/GTA 5.png" alt="Grand Theft Auto V" class="game-image">
                     <div class="game-details">
                         <h3 class="game-title">Grand Theft Auto V</h3>
                         <div class="game-meta">
                             <span>Action, Open World</span>
                             <span>Rated: 4/5</span>
                         </div>
-                        <div class="game-playtime">Play Time: 45 hours</div>
+                        <div class="game-playtime">
+                            <i class="fas fa-clock"></i> Play Time: 45 hours
+                        </div>
                     </div>
                 </div>
                 <div class="game-card">
-                    <img src="https://i.imgur.com/vz4Rh7o.jpg" alt="Days Gone" class="game-image">
+                    <img src="../static/img/DaysGone.png" alt="Days Gone" class="game-image">
                     <div class="game-details">
                         <h3 class="game-title">Days Gone</h3>
                         <div class="game-meta">
                             <span>Action, Survival</span>
                             <span>Rated: 4/5</span>
                         </div>
-                        <div class="game-playtime">Play Time: 34 hours</div>
+                        <div class="game-playtime">
+                            <i class="fas fa-clock"></i> Play Time: 34 hours
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-
         
         <section class="comments-section">
             <h2 class="section-title">My Comments</h2>
@@ -597,7 +752,6 @@
         </section>
     </main>
 
-   
     <div id="rateGameModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -620,32 +774,32 @@
                         <div class="rating-option">
                             <input type="radio" id="rating-1" name="rating" value="1" class="rating-radio" required>
                             <label for="rating-1" class="rating-label"><i class="fas fa-star"></i></label>
-                            <span class="rating-value">1</span>
+                            <span class="rating-value">Poor</span>
                         </div>
                         <div class="rating-option">
                             <input type="radio" id="rating-2" name="rating" value="2" class="rating-radio">
                             <label for="rating-2" class="rating-label"><i class="fas fa-star"></i></label>
-                            <span class="rating-value">2</span>
+                            <span class="rating-value">Fair</span>
                         </div>
                         <div class="rating-option">
                             <input type="radio" id="rating-3" name="rating" value="3" class="rating-radio">
                             <label for="rating-3" class="rating-label"><i class="fas fa-star"></i></label>
-                            <span class="rating-value">3</span>
+                            <span class="rating-value">Good</span>
                         </div>
                         <div class="rating-option">
                             <input type="radio" id="rating-4" name="rating" value="4" class="rating-radio">
                             <label for="rating-4" class="rating-label"><i class="fas fa-star"></i></label>
-                            <span class="rating-value">4</span>
+                            <span class="rating-value">Great</span>
                         </div>
                         <div class="rating-option">
                             <input type="radio" id="rating-5" name="rating" value="5" class="rating-radio">
                             <label for="rating-5" class="rating-label"><i class="fas fa-star"></i></label>
-                            <span class="rating-value">5</span>
+                            <span class="rating-value">Excellent</span>
                         </div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <p style="color: #aaaaaa; font-size: 14px;">
+                    <p style="color: #aaaaaa; font-size: 14px; text-align: center;">
                         <i class="fas fa-info-circle"></i>
                         Note: You can only rate games that you have played for at least 1 hour.
                     </p>
@@ -658,7 +812,6 @@
         </div>
     </div>
 
-   
     <div id="playGameModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -680,7 +833,7 @@
                     <input type="number" id="playTime" name="play_time" class="form-control" min="1" required>
                 </div>
                 <div class="form-group">
-                    <p style="color: #aaaaaa; font-size: 14px;">
+                    <p style="color: #aaaaaa; font-size: 14px; text-align: center;">
                         <i class="fas fa-info-circle"></i>
                         Enter how many hours you played this game. This will update your total play time and might update your Most Played Game status.
                     </p>
@@ -693,7 +846,6 @@
         </div>
     </div>
 
-    
     <div id="commentGameModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -715,7 +867,7 @@
                     <textarea id="commentText" name="comment" class="form-control" required placeholder="Share your thoughts about this game..."></textarea>
                 </div>
                 <div class="form-group">
-                    <p style="color: #aaaaaa; font-size: 14px;">
+                    <p style="color: #aaaaaa; font-size: 14px; text-align: center;">
                         <i class="fas fa-info-circle"></i>
                         Note: You can only comment on games that you have played for at least 1 hour.
                     </p>
@@ -728,43 +880,126 @@
         </div>
     </div>
 
-    <footer>
-        <div class="container footer-content">
-            <div class="copyright">
-                &copy; 2025 GameHub - SENG 454 Cloud Systems and Networks Project
-            </div>
-            <div class="social-links">
-                <a href="#"><i class="fab fa-github"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-discord"></i></a>
-            </div>
-        </div>
-    </footer>
-
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ratingLabels = document.querySelectorAll('.rating-label');
+            
+            ratingLabels.forEach(label => {
+                label.addEventListener('mouseenter', function() {
+                    const ratingValue = this.previousElementSibling.value;
+                    
+                    ratingLabels.forEach(innerLabel => {
+                        const innerRatingValue = innerLabel.previousElementSibling.value;
+                        
+                        if (innerRatingValue <= ratingValue) {
+                            innerLabel.style.color = '#ffc107';
+                            innerLabel.style.transform = 'scale(1.2)';
+                        } else {
+                            innerLabel.style.color = '#555555';
+                            innerLabel.style.transform = 'scale(1)';
+                        }
+                    });
+                });
+            });
+            
+            const ratingGroup = document.querySelector('.rating-group');
+            if (ratingGroup) {
+                ratingGroup.addEventListener('mouseleave', function() {
+                    ratingLabels.forEach(label => {
+                        // If the corresponding radio is not checked, reset the star
+                        if (!label.previousElementSibling.checked) {
+                            label.style.color = '#555555';
+                            label.style.transform = 'scale(1)';
+                        } else {
+                            label.style.color = '#ffc107';
+                            label.style.transform = 'scale(1.2)';
+                        }
+                    });
+                });
+            }
+            
+            const ratingRadios = document.querySelectorAll('.rating-radio');
+            ratingRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const ratingValue = this.value;
+                    
+                    ratingLabels.forEach(label => {
+                        const labelRatingValue = label.previousElementSibling.value;
+                        
+                        if (labelRatingValue <= ratingValue) {
+                            label.style.color = '#ffc107';
+                        } else {
+                            label.style.color = '#555555';
+                        }
+                    });
+                });
+            });
+        });
         
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
+            document.body.classList.add('modal-open');
+            
+            document.body.style.overflow = 'hidden';
+            
+            const modalContent = document.getElementById(modalId).querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.style.position = 'fixed';
+                modalContent.style.top = '50vh';
+                modalContent.style.left = '50%';
+                modalContent.style.transform = 'translate(-50%, -50%)';
+            }
         }
-
+        
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
+            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
         }
 
-    
         window.onclick = function(event) {
             const modals = document.getElementsByClassName('modal');
             for (let i = 0; i < modals.length; i++) {
                 if (event.target == modals[i]) {
                     modals[i].style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                    document.body.style.overflow = '';
                 }
             }
         }
+        
+        window.addEventListener('scroll', function() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (modal.style.display === 'block') {
+                    const modalContent = modal.querySelector('.modal-content');
+                    if (modalContent) {
+                        modalContent.style.position = 'fixed';
+                        modalContent.style.top = '50vh';
+                        modalContent.style.left = '50%';
+                        modalContent.style.transform = 'translate(-50%, -50%)';
+                    }
+                }
+            });
+        });
 
-      
+        window.addEventListener('resize', function() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (modal.style.display === 'block') {
+                    const modalContent = modal.querySelector('.modal-content');
+                    if (modalContent) {
+                        modalContent.style.position = 'fixed';
+                        modalContent.style.top = '50vh';
+                        modalContent.style.left = '50%';
+                        modalContent.style.transform = 'translate(-50%, -50%)';
+                    }
+                }
+            });
+        });
+        
         document.getElementById('rateGameForm').addEventListener('submit', function(e) {
             e.preventDefault();
-           
             alert('Rating submitted successfully!');
             closeModal('rateGameModal');
         });
@@ -777,9 +1012,22 @@
 
         document.getElementById('commentGameForm').addEventListener('submit', function(e) {
             e.preventDefault();
-           
             alert('Comment submitted successfully!');
             closeModal('commentGameModal');
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('a').forEach(link => {
+                if (link.href && link.href.includes(window.location.origin) && !link.getAttribute('onclick')) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        document.body.style.animation = 'fadeOut 0.5s ease-out forwards';
+                        setTimeout(() => {
+                            window.location = this.href;
+                        }, 500);
+                    });
+                }
+            });
         });
     </script>
 </body>

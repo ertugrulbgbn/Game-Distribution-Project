@@ -3,30 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameHub - Games Catalog</title>
+    <title>GameWorld - Games Catalog</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #222222;
-            --secondary-color: #444444;
-            --dark-color: #000000;
-            --light-color: #f5f5f5;
-            --gray-color: #e0e0e0;
-            --danger-color: #d32f2f;
-            --success-color: #4caf50;
-            --accent-color: #888888;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
         }
 
         body {
-            background-color: #000000;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
             color: #ffffff;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
         }
 
         .container {
@@ -35,51 +50,56 @@
             padding: 20px;
         }
 
-        header {
-            background-color: var(--dark-color);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        .header-glass {
+            background: #020617;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
         .header-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            height: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-        }
-
-        .logo i {
-            margin-right: 10px;
-            font-size: 28px;
         }
 
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 16px;
         }
 
-        .nav-links a {
+        .nav-link {
             color: white;
             text-decoration: none;
             font-weight: 500;
             padding: 8px 12px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
         }
 
-        .nav-links a:hover {
-            background-color: #333333;
+        .nav-link:hover {
+            transform: translateY(-2px);
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        
-        .nav-links a.active {
-            background-color: #444444;
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .page-title {
@@ -100,22 +120,24 @@
             transform: translateX(-50%);
             width: 100px;
             height: 4px;
-            background-color: #444444;
+            background-color: rgba(99, 102, 241, 0.8);
         }
 
         .games-filter {
-            background-color: #111111;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.05);
         }
 
         .filter-row {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
-            align-items: center;
+            align-items: flex-end;
         }
 
         .filter-group {
@@ -126,33 +148,79 @@
         .filter-label {
             display: block;
             margin-bottom: 8px;
-            color: #cccccc;
+            color: #e5e7eb;
             font-weight: 500;
+            font-size: 14px;
         }
 
         .filter-control {
             width: 100%;
             padding: 10px;
-            border: 1px solid #333333;
-            border-radius: 5px;
-            background-color: #222222;
-            color: #ffffff;
+            background-color: rgba(15, 23, 42, 0.6) !important;
+            border: 2px solid rgba(99, 102, 241, 0.5) !important;
+            border-radius: 6px;
             font-size: 14px;
+            color: #e5e7eb !important;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
+        .filter-control:hover, .filter-control:focus {
+            background-color: rgba(15, 23, 42, 0.8) !important;
+            border-color: rgba(99, 102, 241, 0.8) !important;
+            outline: none !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        select.filter-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 15px;
+        }
+
+        .filter-btn-container {
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 1px;
+        }
+        
         .filter-btn {
             padding: 10px 20px;
-            background-color: #333333;
+            background-color: #2563eb;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
+            font-weight: 500;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            height: 42px;
         }
 
         .filter-btn:hover {
-            background-color: #444444;
+            background-color: #1d4ed8;
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .filter-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s;
+        }
+
+        .filter-btn:hover::after {
+            transform: translate(-50%, -50%) scale(1);
         }
 
         .games-grid {
@@ -163,18 +231,20 @@
         }
 
         .game-card {
-            background-color: #111111;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
             display: flex;
             flex-direction: column;
         }
 
         .game-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
         }
 
         .game-thumbnail {
@@ -236,11 +306,17 @@
         }
 
         .genre-tag {
-            background-color: #333333;
+            background-color: rgba(99, 102, 241, 0.3);
             color: #ffffff;
             padding: 5px 10px;
             border-radius: 20px;
             font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .genre-tag:hover {
+            background-color: rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
         }
 
         .game-stats {
@@ -248,7 +324,7 @@
             justify-content: space-between;
             margin-top: auto;
             padding-top: 15px;
-            border-top: 1px solid #333333;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .game-stat {
@@ -272,7 +348,7 @@
             width: 100%;
             padding: 12px;
             margin-top: 15px;
-            background-color: #333333;
+            background-color: #2563eb;
             color: white;
             border: none;
             border-radius: 5px;
@@ -280,19 +356,42 @@
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
 
         .view-details-btn:hover {
-            background-color: #444444;
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .view-details-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%);
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.5s;
+        }
+
+        .view-details-btn:hover::after {
+            transform: translate(-50%, -50%) scale(1);
         }
 
         /* Game Details Page Styles */
         .game-details {
-            background-color: #111111;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
             border-radius: 10px;
             overflow: hidden;
             margin-bottom: 40px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-out;
         }
 
         .game-banner {
@@ -311,7 +410,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+            background: linear-gradient(to top, rgba(2, 6, 23, 0.9) 0%, rgba(2, 6, 23, 0) 100%);
             padding: 40px 30px 30px;
         }
 
@@ -326,7 +425,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
-            color: #cccccc;
+            color: #e5e7eb;
         }
 
         .meta-item {
@@ -336,7 +435,7 @@
         }
 
         .meta-item i {
-            color: #aaaaaa;
+            color: rgba(99, 102, 241, 0.8);
         }
 
         .game-content {
@@ -352,7 +451,8 @@
             color: #ffffff;
             margin-bottom: 20px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #333333;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-weight: 600;
         }
 
         .game-attributes {
@@ -362,9 +462,17 @@
         }
 
         .attribute-card {
-            background-color: #1a1a1a;
+            background-color: rgba(15, 23, 42, 0.6);
             padding: 15px;
             border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .attribute-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            background-color: rgba(15, 23, 42, 0.8);
         }
 
         .attribute-name {
@@ -389,10 +497,18 @@
         }
 
         .comment-card {
-            background-color: #1a1a1a;
+            background-color: rgba(15, 23, 42, 0.6);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s;
+        }
+
+        .comment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            background-color: rgba(15, 23, 42, 0.8);
         }
 
         .comment-header {
@@ -401,7 +517,7 @@
             align-items: center;
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #333333;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .comment-user {
@@ -414,7 +530,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background-color: #333333;
+            background-color: rgba(99, 102, 241, 0.3);
             color: #ffffff;
             display: flex;
             justify-content: center;
@@ -433,7 +549,7 @@
         }
 
         .comment-content {
-            color: #dddddd;
+            color: #e5e7eb;
             line-height: 1.6;
         }
 
@@ -450,7 +566,7 @@
             justify-content: center;
             width: 40px;
             height: 40px;
-            background-color: #1a1a1a;
+            background-color: rgba(15, 23, 42, 0.6);
             color: #ffffff;
             border-radius: 5px;
             text-decoration: none;
@@ -458,47 +574,15 @@
         }
 
         .page-link.active {
-            background-color: #333333;
+            background-color: #2563eb;
             font-weight: bold;
         }
 
         .page-link:hover {
-            background-color: #333333;
+            background-color: rgba(99, 102, 241, 0.5);
             transform: translateY(-2px);
         }
 
-        footer {
-            margin-top: 40px;
-            background-color: #000000;
-            color: white;
-            padding: 30px 0;
-            border-top: 5px solid #333;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .copyright {
-            font-size: 14px;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-        }
-
-        .social-links a {
-            color: white;
-            font-size: 18px;
-            transition: color 0.3s;
-        }
-
-        .social-links a:hover {
-            color: var(--secondary-color);
-        }
 
         @media (max-width: 768px) {
             .filter-row {
@@ -518,25 +602,19 @@
                 grid-template-columns: 1fr;
             }
 
-            .footer-content {
-                flex-direction: column;
-                gap: 20px;
-                text-align: center;
-            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container header-content">
+    <header class="header-glass">
+        <div class="header-content">
             <div class="logo">
-                <i class="fas fa-gamepad"></i>
-                <span>GameHub</span>
+                <span>GameWorld</span>
             </div>
             <div class="nav-links">
-                <a href="home.html">Home</a>
-                <a href="#" class="active">Games</a>
-                <a href="user_page.html">Profile</a>
+                <a href="home.html" class="nav-link">Home</a>
+                <a href="#" class="nav-link active">Games</a>
+                <a href="user_page.html" class="nav-link">Profile</a>
             </div>
         </div>
     </header>
@@ -544,7 +622,6 @@
     <main class="container">
         <h1 class="page-title">Games Catalog</h1>
 
-      
         <div class="games-filter">
             <div class="filter-row">
                 <div class="filter-group">
@@ -573,16 +650,16 @@
                         <option value="comments">Most Commented</option>
                     </select>
                 </div>
-                <button class="filter-btn">Apply Filters</button>
+                <div class="filter-btn-container">
+                    <button class="filter-btn">Apply Filters</button>
+                </div>
             </div>
         </div>
 
-        
         <div class="games-grid">
-         
             <div class="game-card">
                 <div class="game-thumbnail">
-                    <img src="https://i.imgur.com/WwQ6HtU.jpg" alt="Red Dead Redemption 2">
+                    <img src="../static/img/RDR2.png" alt="Red Dead Redemption 2">
                     <div class="game-rating">
                         <i class="fas fa-star"></i> 4.9
                     </div>
@@ -612,10 +689,9 @@
                 </div>
             </div>
 
-            
             <div class="game-card">
                 <div class="game-thumbnail">
-                    <img src="https://i.imgur.com/FoLEYDE.jpg" alt="Grand Theft Auto V">
+                    <img src="../static/img/GTA 5.png" alt="Grand Theft Auto V">
                     <div class="game-rating">
                         <i class="fas fa-star"></i> 4.8
                     </div>
@@ -645,10 +721,9 @@
                 </div>
             </div>
 
-          
             <div class="game-card">
                 <div class="game-thumbnail">
-                    <img src="https://i.imgur.com/vz4Rh7o.jpg" alt="Days Gone">
+                    <img src="../static/img/DaysGone.png" alt="Days Gone">
                     <div class="game-rating">
                         <i class="fas fa-star"></i> 4.5
                     </div>
@@ -679,10 +754,9 @@
             </div>
         </div>
 
-        
         <div id="rdr2" class="game-details" style="display: none;">
             <div class="game-banner">
-                <img src="https://i.imgur.com/WwQ6HtU.jpg" alt="Red Dead Redemption 2">
+                <img src="../static/img/RDR2.png" alt="Red Dead Redemption 2">
                 <div class="game-banner-overlay">
                     <h1 class="game-banner-title">Red Dead Redemption 2</h1>
                     <div class="game-banner-meta">
@@ -690,7 +764,6 @@
                             <i class="fas fa-star"></i>
                             <span>4.9 / 5</span>
                         </div>
-                        
                         <div class="meta-item">
                             <i class="fas fa-clock"></i>
                             <span>412 hours played</span>
@@ -786,7 +859,7 @@
 
         <div id="gtav" class="game-details" style="display: none;">
             <div class="game-banner">
-                <img src="https://i.imgur.com/FoLEYDE.jpg" alt="Grand Theft Auto V">
+                <img src="../static/img/GTA 5.png" alt="Grand Theft Auto V">
                 <div class="game-banner-overlay">
                     <h1 class="game-banner-title">Grand Theft Auto V</h1>
                     <div class="game-banner-meta">
@@ -887,10 +960,9 @@
             </div>
         </div>
 
-      
         <div id="daysgone" class="game-details" style="display: none;">
             <div class="game-banner">
-                <img src="https://i.imgur.com/vz4Rh7o.jpg" alt="Days Gone">
+                <img src="../static/img/DaysGone.png" alt="Days Gone">
                 <div class="game-banner-overlay">
                     <h1 class="game-banner-title">Days Gone</h1>
                     <div class="game-banner-meta">
@@ -990,48 +1062,48 @@
                 </div>
             </div>
         </div>
+    </main>
 
-                            <script>
-                         
-                                function openModal(modalId) {
-                                    document.getElementById(modalId).style.display = 'block';
-                                }
-                            
-                                function closeModal(modalId) {
-                                    document.getElementById(modalId).style.display = 'none';
-                                }
-                            
-                                window.onclick = function(event) {
-                                    const modals = document.getElementsByClassName('modal');
-                                    for (let i = 0; i < modals.length; i++) {
-                                        if (event.target == modals[i]) {
-                                            modals[i].style.display = 'none';
-                                        }
-                                    }
-                                }
-                                
-                              
-                                function showGameDetails(gameId) {
-                                
-                                    const allDetails = document.querySelectorAll('.game-details');
-                                    allDetails.forEach(detail => {
-                                        detail.style.display = 'none';
-                                    });
-                                    
-                                  
-                                    const selectedGame = document.getElementById(gameId);
-                                    if (selectedGame) {
-                                        selectedGame.style.display = 'block';
-                                        
-                                   
-                                        selectedGame.scrollIntoView({ behavior: 'smooth' });
-                                    }
-                                    function hideGameDetails() {
-                                        const allDetails = document.querySelectorAll('.game-details');
-                                        allDetails.forEach(detail => {
-                                            detail.style.display = 'none';
-                                        });
-                                    }
-                                }
-                            </script>
-                          
+    <script>
+        function showGameDetails(gameId) {
+            const allDetails = document.querySelectorAll('.game-details');
+            allDetails.forEach(detail => {
+                detail.style.display = 'none';
+            });
+            
+            const selectedGame = document.getElementById(gameId);
+            if (selectedGame) {
+                selectedGame.style.display = 'block';
+                
+                selectedGame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        function hideGameDetails() {
+            const allDetails = document.querySelectorAll('.game-details');
+            allDetails.forEach(detail => {
+                detail.style.display = 'none';
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('a').forEach(link => {
+                if (link.href && link.href.includes(window.location.origin) && !link.getAttribute('onclick')) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        document.body.style.animation = 'fadeOut 0.5s ease-out forwards';
+                        setTimeout(() => {
+                            window.location = this.href;
+                        }, 500);
+                    });
+                }
+            });
+            
+            const filterBtn = document.querySelector('.filter-btn');
+            filterBtn.addEventListener('click', function() {
+                alert('Filters applied! In a real application, this would filter the games based on your criteria.');
+            });
+        });
+    </script>
+</body>
+</html>
