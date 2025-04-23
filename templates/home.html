@@ -561,42 +561,29 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for game in games %}
                         <tr>
-                            <td>Red Dead Redemption 2</td>
-                            <td>Action, Adventure</td>
-                            <td>412 hours</td>
-                            <td>4.9</td>
-                            <td>32</td>
-                            <td>Active</td>
+                            <td>{{ game.name }}</td>
+                            <td>{{ game.genres|join(', ') }}</td>
+                            <td>{{ game.play_time }} hours</td>
+                            <td>{{ game.rating|round(1) }}</td>
+                            <td>{{ game.all_comments|length if game.all_comments else 0 }}</td>
+                            <td>{{ 'Active' if game.rating_enable else 'Ratings Disabled' }}</td>
                             <td class="table-actions">
-                                <button class="table-btn toggle">Disable Ratings</button>
-                                <button class="table-btn delete">Remove</button>
+                                <form action="/toggle_rating" method="POST" style="display: inline;">
+                                    <input type="hidden" name="game_id" value="{{ game._id }}">
+                                    <input type="hidden" name="action" value="{{ 'disable' if game.rating_enabled else 'enable' }}">
+                                    <button type="submit" class="table-btn toggle">
+                                        {{ 'Disable' if game.rating_enabled else 'Enable' }} Ratings
+                                    </button>
+                                </form>
+                                <form action="/remove_game" method="POST" style="display: inline;">
+                                    <input type="hidden" name="game_id" value="{{ game._id }}">
+                                    <button type="submit" class="table-btn delete">Remove</button>
+                                </form>
                             </td>
                         </tr>
-                        <tr>
-                            <td>Days Gone</td>
-                            <td>Action, Survival</td>
-                            <td>287 hours</td>
-                            <td>4.5</td>
-                            <td>19</td>
-                            <td>Active</td>
-                            <td class="table-actions">
-                                <button class="table-btn toggle">Disable Ratings</button>
-                                <button class="table-btn delete">Remove</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Grand Theft Auto V</td>
-                            <td>Action, Open World</td>
-                            <td>536 hours</td>
-                            <td>4.8</td>
-                            <td>47</td>
-                            <td>Ratings Disabled</td>
-                            <td class="table-actions">
-                                <button class="table-btn toggle">Enable Ratings</button>
-                                <button class="table-btn delete">Remove</button>
-                            </td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -619,36 +606,24 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for user in users %}
                         <tr>
-                            <td>GamerPro92</td>
-                            <td>157 hours</td>
-                            <td>4.3</td>
-                            <td>Red Dead Redemption 2</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.total_play_time }} hours</td>
+                            <td>{{ user.avarage_of_rating }}</td> 
+                            <td>{{ user.most_played if user.most_played else "None" }}</td>
                             <td class="table-actions">
-                                <button class="table-btn login">Login as</button>
-                                <button class="table-btn delete">Remove</button>
+                                <form action="/login_as_user" method="POST" style="display: inline;">
+                                    <input type="hidden" name="user_id" value="{{ user._id }}">
+                                    <button type="submit" class="table-btn login">Login as</button>
+                                </form>
+                                <form action="/remove_user" method="POST" style="display: inline;">
+                                    <input type="hidden" name="user_id" value="{{ user._id }}">
+                                    <button type="submit" class="table-btn delete">Remove</button>
+                                </form>
                             </td>
                         </tr>
-                        <tr>
-                            <td>EpicPlayer</td>
-                            <td>213 hours</td>
-                            <td>3.9</td>
-                            <td>Grand Theft Auto V</td>
-                            <td class="table-actions">
-                                <button class="table-btn login">Login as</button>
-                                <button class="table-btn delete">Remove</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>GameMaster</td>
-                            <td>310 hours</td>
-                            <td>4.7</td>
-                            <td>Days Gone</td>
-                            <td class="table-actions">
-                                <button class="table-btn login">Login as</button>
-                                <button class="table-btn delete">Remove</button>
-                            </td>
-                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -702,9 +677,9 @@
                     <label for="selectGameToRemove">Select Game*</label>
                     <select id="selectGameToRemove" name="game_id" class="form-control" required>
                         <option value="">-- Select a game --</option>
-                        <option value="1">Red Dead Redemption 2</option>
-                        <option value="2">Days Gone</option>
-                        <option value="3">Grand Theft Auto V</option>
+                        {% for game in games %}
+                        <option value="{{ game._id }}">{{ game.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
@@ -732,9 +707,9 @@
                     <label for="selectGameRating">Select Game*</label>
                     <select id="selectGameRating" name="game_id" class="form-control" required>
                         <option value="">-- Select a game --</option>
-                        <option value="1">Red Dead Redemption 2</option>
-                        <option value="2">Days Gone</option>
-                        <option value="3">Grand Theft Auto V</option>
+                        {% for game in games %}
+                        <option value="{{ game._id }}">{{ game.name }} ({{ "Enabled" if game.rating_enable else "Disabled" }})</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
@@ -795,9 +770,9 @@
                     <label for="selectUserToRemove">Select User*</label>
                     <select id="selectUserToRemove" name="user_id" class="form-control" required>
                         <option value="">-- Select a user --</option>
-                        <option value="1">GamerPro92</option>
-                        <option value="2">EpicPlayer</option>
-                        <option value="3">GameMaster</option>
+                        {% for user in users %}
+                        <option value="{{ user._id }}">{{ user.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
@@ -825,9 +800,9 @@
                     <label for="selectUserToLogin">Select User*</label>
                     <select id="selectUserToLogin" name="user_id" class="form-control" required>
                         <option value="">-- Select a user --</option>
-                        <option value="1">GamerPro92</option>
-                        <option value="2">EpicPlayer</option>
-                        <option value="3">GameMaster</option>
+                        {% for user in users %}
+                        <option value="{{ user._id }}">{{ user.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
@@ -888,15 +863,16 @@
                 });
             });
 
+            
             const forms = document.querySelectorAll('form');
             forms.forEach(form => {
                 form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-
+                    
                     const modalId = this.closest('.modal').id;
                     closeModal(modalId);
-
-                    alert('Form submitted successfully!');
+                    
+                    
+                    
                 });
             });
         });

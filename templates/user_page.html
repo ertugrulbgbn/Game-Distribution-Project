@@ -636,22 +636,22 @@
                     <i class="fas fa-user"></i>
                 </div>
                 <div class="user-info">
-                    <h1>GamerPro92</h1>
-                    <p>Member since April 2025</p>
+                    <h1>{{ user.name }}</h1>
+                    <p>Member since {{ user.created_at.strftime('%B %Y') if user.created_at else 'Unknown' }}</p>
                 </div>
             </div>
-
+            
             <div class="user-stats">
                 <div class="stat-card">
-                    <div class="stat-value">4.3</div>
+                    <div class="stat-value">{{ user.average_of_ratings|round(1) }}</div>
                     <div class="stat-label">Average Rating</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">157</div>
+                    <div class="stat-value">{{ user.total_play_time }}</div>
                     <div class="stat-label">Total Play Time (hours)</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">Red Dead Redemption 2</div>
+                    <div class="stat-value">{{ user.most_played_game or 'None' }}</div>
                     <div class="stat-label">Most Played Game</div>
                 </div>
             </div>
@@ -676,78 +676,44 @@
         <section>
             <h2 class="section-title">My Games</h2>
             <div class="game-cards">
+                {% for game in user_games %}
                 <div class="game-card">
-                    <img src="../static/img/RDR2.png" alt="Red Dead Redemption 2" class="game-image">
+                    <img src="{{ game.photo }}" alt="{{ game.name }}" class="game-image">
                     <div class="game-details">
-                        <h3 class="game-title">Red Dead Redemption 2</h3>
+                        <h3 class="game-title">{{ game.name }}</h3>
                         <div class="game-meta">
-                            <span>Action, Adventure</span>
-                            <span>Rated: 5/5</span>
+                            <span>{{ game.genre|join(', ') }}</span>
+                            <span>Rated: {{ game.user_rating|default('Not rated') }}</span>
                         </div>
-                        <div class="game-playtime">
-                            <i class="fas fa-clock"></i> Play Time: 78 hours
-                        </div>
+                        <div class="game-playtime">Play Time: {{ game.user_play_time }} hours</div>
                     </div>
                 </div>
-                <div class="game-card">
-                    <img src="../static/img/GTA 5.png" alt="Grand Theft Auto V" class="game-image">
-                    <div class="game-details">
-                        <h3 class="game-title">Grand Theft Auto V</h3>
-                        <div class="game-meta">
-                            <span>Action, Open World</span>
-                            <span>Rated: 4/5</span>
-                        </div>
-                        <div class="game-playtime">
-                            <i class="fas fa-clock"></i> Play Time: 45 hours
-                        </div>
-                    </div>
-                </div>
-                <div class="game-card">
-                    <img src="../static/img/DaysGone.png" alt="Days Gone" class="game-image">
-                    <div class="game-details">
-                        <h3 class="game-title">Days Gone</h3>
-                        <div class="game-meta">
-                            <span>Action, Survival</span>
-                            <span>Rated: 4/5</span>
-                        </div>
-                        <div class="game-playtime">
-                            <i class="fas fa-clock"></i> Play Time: 34 hours
-                        </div>
-                    </div>
-                </div>
+                {% else %}
+                <p>You haven't played any games yet.</p>
+                {% endfor %}
             </div>
         </section>
         
         <section class="comments-section">
             <h2 class="section-title">My Comments</h2>
             <div class="comments-list">
-                <div class="comment-card">
-                    <div class="comment-header">
-                        <div class="comment-game">Red Dead Redemption 2</div>
-                        <div class="comment-meta">Play Time: 78 hours</div>
+                {% if user.comments %}
+                    {% for comment in user.comments %}
+                    <div class="comment-card">
+                        <div class="comment-header">
+                            <div class="comment-game">{{ comment.game }}</div>
+                            <div class="comment-meta">
+                                Play Time: {{ comment.play_time }} hours
+                            </div>
+                        </div>
+                        <div class="comment-text">
+                            {{ comment.text }}
+                        </div>
                     </div>
-                    <div class="comment-text">
-                        Amazing game with incredible detail. The story, characters, and world-building are top-notch. Definitely one of the best games I've ever played!
-                    </div>
-                </div>
-                <div class="comment-card">
-                    <div class="comment-header">
-                        <div class="comment-game">Grand Theft Auto V</div>
-                        <div class="comment-meta">Play Time: 45 hours</div>
-                    </div>
-                    <div class="comment-text">
-                        Great open world with lots to do. The three protagonist system works really well, and the heists are fun to plan and execute.
-                    </div>
-                </div>
-                <div class="comment-card">
-                    <div class="comment-header">
-                        <div class="comment-game">Days Gone</div>
-                        <div class="comment-meta">Play Time: 34 hours</div>
-                    </div>
-                    <div class="comment-text">
-                        Underrated game with a great story. The motorcycle gameplay is fun, and the hordes are terrifying. Deacon is a believable protagonist with solid character development.
-                    </div>
-                </div>
+                    {% endfor %}
+                {% else %}
+                    <p>You haven't commented on any games yet.</p>
+                {% endif %}
             </div>
         </section>
     </main>
@@ -762,10 +728,13 @@
                 <div class="form-group">
                     <label for="rateGameSelect">Select Game*</label>
                     <select id="rateGameSelect" name="game_id" class="form-control" required>
+                        
                         <option value="">-- Select a game --</option>
-                        <option value="1">Red Dead Redemption 2</option>
-                        <option value="2">Grand Theft Auto V</option>
-                        <option value="3">Days Gone</option>
+                        {% for game in games %}
+                            {% if game.rating_enabled and game_play_time.get(game._id|string, 0) >= 1 %}
+                            <option value="{{ game._id }}">{{ game.name }}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
