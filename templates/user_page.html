@@ -622,9 +622,9 @@
                 <span>GameWorld</span>
             </div>
             <div class="nav-links">
-                <a href="home.html" class="nav-link">Home</a>
-                <a href="games.html" class="nav-link">Games</a>
-                <a href="#" class="nav-link active">Profile</a>
+                <a href="/" class="nav-link">Home</a>
+                <a href="/games" class="nav-link">Games</a>
+                <a href="/user_page" class="nav-link active">Profile</a>
             </div>
         </div>
     </header>
@@ -643,7 +643,7 @@
             
             <div class="user-stats">
                 <div class="stat-card">
-                    <div class="stat-value">{{ user.average_of_ratings|round(1) }}</div>
+                    <div class="stat-value">{{ user.avarage_of_rating }}</div>
                     <div class="stat-label">Average Rating</div>
                 </div>
                 <div class="stat-card">
@@ -682,7 +682,7 @@
                     <div class="game-details">
                         <h3 class="game-title">{{ game.name }}</h3>
                         <div class="game-meta">
-                            <span>{{ game.genre|join(', ') }}</span>
+                            <span>{{ game.genres|join(', ') }}</span>
                             <span>Rated: {{ game.user_rating|default('Not rated') }}</span>
                         </div>
                         <div class="game-playtime">Play Time: {{ game.user_play_time }} hours</div>
@@ -731,8 +731,7 @@
                         
                         <option value="">-- Select a game --</option>
                         {% for game in games %}
-                            {% if game.rating_enabled and game_play_time.get(game._id|string, 0) >= 1 %}
-                            <option value="{{ game._id }}">{{ game.name }}</option>
+                        {% if game.rating_enable and game.user_play_time >= 1 %}                            <option value="{{ game._id }}">{{ game.name }}</option>
                             {% endif %}
                         {% endfor %}
                     </select>
@@ -792,9 +791,9 @@
                     <label for="playGameSelect">Select Game*</label>
                     <select id="playGameSelect" name="game_id" class="form-control" required>
                         <option value="">-- Select a game --</option>
-                        <option value="1">Red Dead Redemption 2</option>
-                        <option value="2">Grand Theft Auto V</option>
-                        <option value="3">Days Gone</option>
+                        {% for game in games %}
+                        <option value="{{ game._id }}">{{ game.name }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="form-group">
@@ -825,15 +824,18 @@
                 <div class="form-group">
                     <label for="commentGameSelect">Select Game*</label>
                     <select id="commentGameSelect" name="game_id" class="form-control" required>
-                        <option value="">-- Select a game --</option>
-                        <option value="1">Red Dead Redemption 2</option>
-                        <option value="2">Grand Theft Auto V</option>
-                        <option value="3">Days Gone</option>
-                    </select>
-                </div>
+                    <option value="">-- Select a game --</option>
+                    
+                    {% for game in games %}
+                        {% if game.user_play_time >= 1 %}
+                        <option value="{{ game._id }}">{{ game.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
                 <div class="form-group">
                     <label for="commentText">Your Comment*</label>
-                    <textarea id="commentText" name="comment" class="form-control" required placeholder="Share your thoughts about this game..."></textarea>
+                    <textarea id="commentText" name="comment_text" class="form-control" required placeholder="Share your thoughts about this game..."></textarea>
                 </div>
                 <div class="form-group">
                     <p style="color: #aaaaaa; font-size: 14px; text-align: center;">
@@ -875,7 +877,7 @@
             if (ratingGroup) {
                 ratingGroup.addEventListener('mouseleave', function() {
                     ratingLabels.forEach(label => {
-                        // If the corresponding radio is not checked, reset the star
+                       
                         if (!label.previousElementSibling.checked) {
                             label.style.color = '#555555';
                             label.style.transform = 'scale(1)';
@@ -897,8 +899,10 @@
                         
                         if (labelRatingValue <= ratingValue) {
                             label.style.color = '#ffc107';
+                            label.style.transform = 'scale(1.2)';
                         } else {
                             label.style.color = '#555555';
+                            label.style.transform = 'scale(1)';
                         }
                     });
                 });
@@ -968,19 +972,19 @@
         });
         
         document.getElementById('rateGameForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+            //e.preventDefault();
             alert('Rating submitted successfully!');
             closeModal('rateGameModal');
         });
 
         document.getElementById('playGameForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+           // e.preventDefault();
             alert('Play time logged successfully!');
             closeModal('playGameModal');
         });
 
         document.getElementById('commentGameForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+            //e.preventDefault();
             alert('Comment submitted successfully!');
             closeModal('commentGameModal');
         });
@@ -989,7 +993,7 @@
             document.querySelectorAll('a').forEach(link => {
                 if (link.href && link.href.includes(window.location.origin) && !link.getAttribute('onclick')) {
                     link.addEventListener('click', function(e) {
-                        e.preventDefault();
+                        //e.preventDefault();
                         document.body.style.animation = 'fadeOut 0.5s ease-out forwards';
                         setTimeout(() => {
                             window.location = this.href;

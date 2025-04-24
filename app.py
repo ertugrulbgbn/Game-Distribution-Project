@@ -15,9 +15,9 @@ def test_connection():
     try:
         with get_db_connection() as db:
             collections = db.list_collection_names()
-            return f"Bağlantı başarılı! Koleksiyonlar: {collections}"
+            return f"The connection is successful: {collections}"
     except Exception as e:
-     return f"Bağlantı hatası: {str(e)}"  
+     return f"connection problem: {str(e)}"
 
 
 @contextlib.contextmanager
@@ -140,21 +140,262 @@ def user_page():
             session.pop("user_id", None)
             return redirect(url_for("home"))
         
-        
         games = list(db.games.find())
+        user_games = []
         
-       
         for game in games:
-            
             user_comments = [comment for comment in user.get("comments", []) if comment["game"] == game["name"]]
             
-       
             user_play_time = sum(comment.get("play_time", 0) for comment in user_comments) if user_comments else 0
+            
+            if user_play_time > 0:
+                game_copy = game.copy()
+                game_copy["user_play_time"] = user_play_time
+                
+              
+                user_rating = next((comment.get("rating", None) for comment in user_comments if "rating" in comment), None)
+                game_copy["user_rating"] = user_rating
+                
+                user_games.append(game_copy)
             
             game["user_play_time"] = user_play_time
     
+    return render_template("user_page.html", user=user, games=games, user_games=user_games)
+@app.route("/play_game", methods=["POST"])
+def play_game():
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+    
+    game_id = request.form.get("game_id")
+    play_time = int(request.form.get("play_time", 0))
+    
+    try:
+        with get_db_connection() as db:
+            user = db.users.find_one({"_id": ObjectId(session["user_id"])})
+            game = db.games.find_one({"_id": ObjectId(game_id)})
+            
+            if not user or not game:
+                flash("User or Game not found", "error")
+                return redirect(url_for("user_page"))
+            
+      
+            db.games.update_one(
+                {"_id": ObjectId(game_id)},
+                {"$inc": {"play_time": play_time}}
+            )
+            
+         
+            db.users.update_one(
+                {"_id": ObjectId(session["user_id"])},
+                {"$inc": {"total_play_time": play_time}}
+            )
+            
+        
+            user_comment = None
+            for comment in user.get("comments", []):
+                if comment.get("game") == game["name"]:
+                    user_comment = comment
+                    break
+                    
+            if user_comment:
+                db.users.update_one(
+                    {"_id": ObjectId(session["user_id"]), "comments.game": game["name"]},
+                    {"$inc": {"comments.$.play_time": play_time}}
+                )
+            else:
+                new_comment = {"game": game["name"], "text": "", "play_time": play_time}
+                db.users.update_one(
+                    {"_id": ObjectId(session["user_id"])},
+                    {"$push": {"comments": new_comment}}
+                )
+            
+            updated_user = db.users.find_one({"_id": ObjectId(session["user_id"])})
+            
+         
+            print(f"Game played: {game['name']}, Play time: {play_time}")
+            print(f"User comments after update: {updated_user.get('comments', [])}")
+            
+            update_most_played_game(session["user_id"])
+            flash(f"You played {game['name']} for {play_time} hours", "success")
+            return redirect(url_for("user_page"))
+    except Exception as e:
+        print(f"Hata oluştu: {str(e)}")
+        flash(f"Bir hata oluştu: {str(e)}", "error")
+        return redirect(url_for("user_page"))
+@app.route("/rate_game", methods=["POST"])
+def rating_game():
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+    game_id=request.form.get("game_id")
+    rating=int(request.form.get("rating",0)) 
+    with get_db_connection() as db:
+        user=db.users.find_one({"_id":ObjectId(session["user_id"])})
+        game=db.games.find_one({"_id":ObjectId(game_id)})
+        if not user or not game:
+            flash("User or Game not found", "error")
+            return redirect(url_for("user_page"))
+        user_comment=None
+        for comment in user.get("comments",[]):
+            if comment.get("game")==game["name"]:
+                user_comment=comment
+                break
+        if not user_comment or user_comment.get("play_time",0)<1:
+            flash("You need to play the game for at least 1 hour before rating it.", "error")
+            return redirect(url_for("user_page"))
+        db.users.update_one({"_id":ObjectId(session["user_id"]),"comments.game":game["name"]},{"$set":{"comments.$.rating":rating}})
+        update_user_average_rating(session["user_id"])
+        update_game_rating(game["_id"])
+        flash(f"{game['name']} oyununa {rating}/5 puan verdiniz.", "success")
+        return redirect(url_for("user_page"))
+@app.route("/comment_game", methods=["POST"])
+def comment_game():
+    if "user_id" not in session:
+        return redirect(url_for("home"))
+    game_id=request.form.get("game_id")
+    comment_text=request.form.get("comment_text","").strip()
+    with get_db_connection() as db:
+        user=db.users.find_one({"_id":ObjectId(session["user_id"])})
+        game=db.games.find_one({"_id":ObjectId(game_id)})
+        if not user or not game:
+            flash("User or Game not found", "error")
+            return redirect(url_for("user_page"))
+        user_comment=None
+        for comment in user.get("comments",[]):
+            if comment.get("game")==game["name"]:
+                user_comment=comment
+                break
+        if not user_comment or user_comment.get("play_time",0)<1:
+            flash("You need to play the game for at least 1 hour before commenting on it.", "error")
+            return redirect(url_for("user_page"))
+        db.users.update_one({"_id":ObjectId(session["user_id"]),"comments.game":game["name"]},{"$set":{"comments.$.text":comment_text}})
+        exists_comment=False
+        for comment in game.get("all_comments",[]):
+            if comment.get("user")==user["name"]:
+                exists_comment=True
+                db.games.update_one(
+                    {"_id": ObjectId(game_id), "all_comments.user": user["name"]},
+                    {"$set": {
+                        "all_comments.$.text": comment_text,
+                        "all_comments.$.play_time": user_comment["play_time"]
+                    }}
+                )
+                break
+        if not exists_comment:
+            db.games.update_one({
+                "_id": ObjectId(game_id)},{"$push":{"all_comments":{"user":user["name"],"text":comment_text,"play_time":user_comment["play_time"]}}})
+            flash(f"You commented on {game['name']}.", "success")
+        return redirect(url_for("user_page"))
+def update_most_played_game(user_id):
+    try:
+        with get_db_connection() as db:
+            user = db.users.find_one({"_id": ObjectId(user_id)})
+            
+            if not user or not user.get("comments"):
+                print("User or comments not found for most played game update")
+                return
+            
+            print(f"User comments for most played update: {user.get('comments', [])}")
+            
+            if len(user["comments"]) > 0:
+                most_commented_game = max(user["comments"], key=lambda x: x.get("play_time", 0))
+                most_played_game = most_commented_game.get("game")
+                
+                print(f"Most played game determined as: {most_played_game}")
+                
+                db.users.update_one(
+                    {"_id": ObjectId(user_id)},
+                    {"$set": {"most_played": most_played_game}}
+                )
+    except Exception as e:
+        print(f"Most played game update error: {str(e)}")
+def update_user_average_rating(user_id):
+    with get_db_connection() as db:
+        user = db.users.find_one({"_id": ObjectId(user_id)})
+        
+        if not user:
+            return
+        
+        rated_comments = [comment for comment in user.get("comments", []) if "rating" in comment]
+        
+        if not rated_comments:
+            avg_rating = 0
+        else:
+            avg_rating = sum(comment["rating"] for comment in rated_comments) / len(rated_comments)
+        
+     
+        db.users.update_one(
+            {"_id": ObjectId(user_id)},
+            {"$set": {"avarage_of_rating": round(avg_rating, 1)}}
+        )
 
-    return render_template("user_page.html", user=user, games=games)
+def update_game_rating(game_id):
+    with get_db_connection() as db:
+        game = db.games.find_one({"_id": ObjectId(game_id)})
+        users = list(db.users.find())
+        
+        total_weighted_rating = 0
+        total_play_time = 0
+        
+        for user in users:
+            for comment in user.get("comments", []):
+                if comment.get("game") == game["name"] and "rating" in comment:
+                    play_time = comment.get("play_time", 0)
+                    rating = comment["rating"]
+                    
+                    total_weighted_rating += play_time * rating
+                    total_play_time += play_time
+        
+        if total_play_time > 0:
+            weighted_rating = total_weighted_rating / total_play_time
+        else:
+            weighted_rating = 0
+        
+      
+        db.games.update_one(
+            {"_id": ObjectId(game_id)},
+            {"$set": {"rating": round(weighted_rating, 1)}}
+        )
+@app.route("/debug_user")
+def debug_user():
+    if "user_id" not in session:
+        return "Kullanıcı girişi yapılmamış"
+    
+    user_id = session["user_id"]
+    
+    with get_db_connection() as db:
+        user = db.users.find_one({"_id": ObjectId(user_id)})
+        
+        if not user:
+            return "Kullanıcı bulunamadı"
+        
+        comments = user.get("comments", [])
+        
+        result = {
+            "user_name": user["name"],
+            "total_play_time": user["total_play_time"],
+            "comments": comments
+        }
+        
+        return str(result)
+        
+            
+        
+           
+            
+
+        
+    
+    
+    
+        
+        
+        
+
+               
+
+        
+                 
+    
     
 
     
