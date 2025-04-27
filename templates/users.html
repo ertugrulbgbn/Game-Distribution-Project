@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users - Game Forge</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAsMCwyNTYsMjU2Ij4KPGcgZmlsbD0iIzBmMTcyYSIgZmlsbC1ydWxlPSJub256ZXJvIiBzdHJva2U9Im5vbmUiIHN0cm9rZS13aWR0aD0iMSIgc3Ryb2tlLWxpbmVjYXA9ImJ1dHQiIHN0cm9rZS1saW5lam9pbj0ibWl0ZXIiIHN0cm9rZS1taXRlcmxpbWl0PSIxMCIgc3Ryb2tlLWRhc2hhcnJheT0iIiBzdHJva2UtZGFzaG9mZnNldD0iMCIgZm9udC1mYW1pbHk9Im5vbmUiIGZvbnQtd2VpZ2h0PSJub25lIiBmb250LXNpemU9Im5vbmUiIHRleHQtYW5jaG9yPSJub25lIiBzdHlsZT0ibWl4LWJsZW5kLW1vZGU6IG5vcm1hbCI+PGcgdHJhbnNmb3JtPSJzY2FsZSg1LjEyLDUuMTIpIj48cGF0aCBkPSJNNDYuOTg0MzgsNC4wMTU2M2MtMC41NTA3OCwwLjAwNzgxIC0wLjk5MjE5LDAuNDYwOTQgLTAuOTg0MzcsMS4wMTE3MmMwLDAgLTAuMDAzOTEsMC40NTMxMyAtMC4zMzIwMywwLjk0NTMxYy0wLjMyODEyLDAuNDkyMTkgLTAuOTE3OTcsMS4wNTQ2OSAtMi42Njc5NywxLjA1NDY5aC04Yy0xLjE3NTc4LDAgLTMuNzc3MzQsMC4zMDA3OCAtNi4yNjE3MiwxLjgzOTg0Yy0xLjE2NDA2LDAuNzE4NzUgLTIuMjczNDQsMS43NTc4MSAtMy4xMjg5MSwzLjEzMjgxaC0xLjYwOTM3Yy0wLjAzNTE2LDAgLTAuMDY2NDEsMC4wMTU2MyAtMC4wOTc2NiwwLjAxOTUzYy0xMi40NTcwMywwLjIxMDk0IC0yMC45NDE0MSwzLjg3ODkxIC0yMS4zMDg1OSw0LjAzOTA2Yy0wLjM1OTM3LDAuMTYwMTYgLTAuNTkzNzUsMC41MTk1MyAtMC41OTM3NSwwLjkxNDA2djMuNjgzNTljMCwxLjA4MjAzIDAuNSwyLjA3MDMxIDEuMzc1LDIuNzA3MDNjMC44NzEwOSwwLjYzNjcyIDEuOTY0ODQsMC44MTI1IDIuOTk2MDksMC40ODQzOGMwLjUwNzgxLC0wLjE2NDA2IDEuMDQ2ODgsLTAuMzQzNzUgMS41OTc2NiwtMC41MzEyNWMxLjYyNSwtMC41NDY4NyAzLjMwNDY5LC0xLjExMzI4IDQuNTg5ODQsLTEuMzIwMzFjMC41NzAzMSwtMC4wOTM3NSAxLjI1LDAuMDkzNzUgMS43NjU2MywwLjQ4ODI4YzAuMjIyNjYsMC4xNzE4OCAwLjYwNTQ3LDAuNTMxMjUgMC42NzU3OCwxLjA0Mjk3djYuNDcyNjZoNC4xMzI4MWMwLjQ2ODc1LC0yLjQzMzU5IDIuMTA1NDcsLTYgNS44NjcxOSwtNmMzLjc2NTYzLDAgNS4zOTg0NCwzLjU2NjQxIDUuODcxMDksNmg0LjEyODkxdi02LjQ3MjY2YzAuMDc0MjIsLTAuNTExNzIgMC40NTMxMywtMC44NzEwOSAwLjY3OTY5LC0xLjA0Mjk3YzAuNTE1NjMsLTAuMzk0NTMgMS4xOTE0MSwtMC41ODIwMyAxLjc2MTcyLC0wLjQ4ODI4YzEuMjg1MTYsMC4yMDMxMyAyLjk2NDg0LDAuNzczNDQgNC41ODk4NCwxLjMyMDMxYzAuNTQ2ODgsMC4xODc1IDEuMDg1OTQsMC4zNjcxOSAxLjU5NzY2LDAuNTMxMjVjMS4wMzEyNSwwLjMyODEzIDIuMTI1LDAuMTUyMzQgMi45OTYwOSwtMC40ODQzN2MwLjg3NSwtMC42MzY3MiAxLjM3NSwtMS42MjUgMS4zNzUsLTIuNzA3MDN2LTMuNjgzNTljMCwtMC4zOTQ1MyAtMC4yMzQzNywtMC43NTM5MSAtMC41OTM3NSwtMC45MTQwNmMtMC4zMjAzMSwtMC4xNDA2MiAtNi43NjE3MiwtMi45MjE4NyAtMTYuNjA5MzcsLTMuNzg5MDZjLTEuNDg4MjgsMC45NzI2NiAtMi43OTY4NywyLjY4MzU5IC0yLjc5Njg3LDUuNzMwNDdjMCwwLjAwNzgxIC0wLjAwMzkxLDAuMDE1NjMgLTAuMDAzOTEsMC4wMjczNGMtMC4wMTU2MiwxLjU1MDc4IC0xLjIwMzEyLDIuODA0NjkgLTIuNzIyNjYsMi45NDUzMWMtMC4wODk4NCwwLjAwNzgxIC0wLjE3OTY5LDAuMDI3MzQgLTAuMjczNDQsMC4wMjczNGMtMS42NTYyNSwwIC0zLC0xLjM0Mzc1IC0zLC0zYzAsLTEuNDI1NzggMC45OTYwOSwtMi42MTcxOSAyLjMzMjAzLC0yLjkyMTg3Yy0wLjIxMDk0LDAuODk0NTMgLTAuMzMyMDMsMS44NzEwOSAtMC4zMzIwMywyLjk0OTIyYy0wLjAwMzkxLDAuMzU5MzggMC4xODM1OSwwLjY5NTMxIDAuNDk2MDksMC44Nzg5MWMwLjMxMjUsMC4xNzk2OSAwLjY5NTMxLDAuMTc5NjkgMS4wMDc4MSwwYzAuMzEyNSwtMC4xODM1OSAwLjUsLTAuNTE5NTMgMC40OTYwOSwtMC44Nzg5MWMwLC0xLjAyMzQ0IDAuMTA5MzgsLTEuOTIxODcgMC4zMDQ2OSwtMi43MTQ4NGMwLjAwNzgxLDAuMDAzOTEgMC4wMTU2MywwLjAwNzgxIDAuMDIzNDQsMC4wMTE3MmMwLjMzOTg0LC0xLjM0Mzc1IDAuOTI5NjksLTIuNDA2MjUgMS42NTIzNCwtMy4yMzQzN2MwLC0wLjAwMzkxIDAsLTAuMDAzOTEgMCwtMC4wMDc4MWMwLjU0Njg4LC0wLjYxMzI4IDEuMTY0MDYsLTEuMTEzMjggMS44MTI1LC0xLjUxOTUzYzIuMDI3MzQsLTEuMjUzOTEgNC40Mjk2OSwtMS41MzUxNiA1LjIwNzAzLC0xLjUzNTE2aDhjMi4yNSwwIDMuNjYwMTYsLTAuOTM3NSA0LjMzMjAzLC0xLjk0NTMxYzAuNjcxODgsLTEuMDA3ODEgMC42Njc5NywtMi4wNTQ2OSAwLjY2Nzk3LC0yLjA1NDY5YzAuMDAzOTEsLTAuMjY5NTMgLTAuMTAxNTYsLTAuNTMxMjUgLTAuMjkyOTcsLTAuNzIyNjZjLTAuMTkxNDEsLTAuMTkxNDEgLTAuNDUzMTIsLTAuMjk2ODcgLTAuNzIyNjYsLTAuMjg5MDZ6TTEyLjg3NSwyMy45OTYwOWMtMS4xMjEwOSwwLjE3OTY5IC0yLjcxODc1LDAuNzE4NzUgLTQuMjY1NjIsMS4yNDIxOWwtMC4wNjY0MSwwLjAyMzQ0Yy0wLjUzNTE2LDAuMTgzNTkgLTEuMDYyNSwwLjM1OTM4IC0xLjU2MjUsMC41MTk1M2MtMC41MzUxNiwwLjE2Nzk3IC0xLjA4NTk0LDAuMjUzOTEgLTEuNjQwNjIsMC4yNTM5MWMtMS4xMzI4MSwwIC0yLjIxODc1LC0wLjM1NTQ3IC0zLjE0NDUzLC0xLjAzMTI1Yy0wLjA1ODU5LC0wLjAzOTA2IC0wLjEwOTM3LC0wLjA4OTg0IC0wLjE2NDA2LC0wLjEzMjgxYzAuMzM1OTQsMTUuNzkyOTcgMy42NTYyNSwxNi4xMjEwOSA0Ljg5NDUzLDE2LjEyODkxYzAuMDc4MTMsMC4wMDc4MSAwLjE4MzU5LDAuMDE1NjMgMC4zMDg1OSwwLjAxNTYzYzAuNDI1NzgsMCAwLjYxNzE5LC0wLjEzMjgxIDEuMzQzNzUsLTAuNjI4OTFjMS40NjQ4NCwtMSAyLjQ0OTIyLC0zLjEwNTQ3IDIuOTIxODgsLTYuMjYxNzJjMC4yOTI5NywtMS43OTY4NyAxLjExMzI4LC0zLjA0Mjk3IDEuNSwtMy45NjQ4NHYtNi4xMjVjLTAuMDU4NTksLTAuMDIzNDQgLTAuMTEzMjgsLTAuMDM5MDYgLTAuMTI1LC0wLjAzOTA2ek0zNy4xMjUsMjMuOTk2MDljLTAuMDExNzIsMCAtMC4wNjY0MSwwLjAxNTYzIC0wLjEyNSwwLjAzOTA2djYuMTI1YzAuMzg2NzIsMC45MjE4OCAxLjIwNzAzLDIuMTY3OTcgMS41LDMuOTY0ODRjMC40NzI2NiwzLjE1NjI1IDEuNDU3MDMsNS4yNjE3MiAyLjkyMTg4LDYuMjYxNzJjMC43MjY1NiwwLjQ5NjA5IDAuOTE3OTcsMC42Mjg5MSAxLjM0Mzc1LDAuNjI4OTFjMC4xMjUsMCAwLjIzMDQ3LC0wLjAwNzgxIDAuMzA4NTksLTAuMDE1NjJjMS4yMzgyOCwtMC4wMDc4MSA0LjU1ODU5LC0wLjMzNTk0IDQuODk0NTMsLTE2LjEyODkxYy0wLjA1NDY5LDAuMDQyOTcgLTAuMTA1NDcsMC4wOTM3NSAtMC4xNjQwNiwwLjEzMjgxYy0wLjkyNTc4LDAuNjc1NzggLTIuMDExNzIsMS4wMzEyNSAtMy4xNDQ1MywxLjAzMTI1Yy0wLjU1NDY5LDAgLTEuMTA1NDcsLTAuMDg1OTQgLTEuNjQwNjIsLTAuMjUzOTFjLTAuNSwtMC4xNjQwNiAtMS4wMjczNCwtMC4zMzk4NCAtMS41NjI1LC0wLjUxOTUzbC0wLjA2NjQxLC0wLjAyMzQ0Yy0xLjU0Njg3LC0wLjUyMzQ0IC0zLjE0NDUzLC0xLjA2MjUgLTQuMjY1NjIsLTEuMjQyMTl6TTI1LDI2Yy0zLjUsMCAtNCw1IC00LDVsLTIsMTRjMCwwLjIzNDM4IDAuMDYyNSwwLjQ2NDg0IDAuMjE0ODQsMC42NDQ1M2MwLjE5MTQxLDAuMjI2NTYgMC40OTIxOSwwLjM1NTQ3IDAuNzg1MTYsMC4zNTU0N2gxMGMwLjI5Mjk3LDAgMC41OTM3NSwtMC4xMjg5MSAwLjc4NTE2LC0wLjM1NTQ3YzAuMTUyMzQsLTAuMTc5NjkgMC4yMTQ4NCwtMC40MTAxNiAwLjIxNDg0LC0wLjY0NDUzbC0yLC0xNGMwLDAgLTAuNSwtNSAtNCwtNXpNMTUsMzJ2OC44ODY3MmMwLjA2NjQxLDEuMjUzOTEgMC44OTg0NCwyLjM1MTU2IDIuMDMxMjUsMi44NDM3NWwwLjExNzE5LDAuMDMxMjVsMS42ODc1LC0xMS43NjE3MnpNMzEuMTY0MDYsMzJsMS42ODc1LDExLjc2NTYzbDAuMTAxNTYsLTAuMDMxMjVjMS4xNDA2MywtMC40ODgyOCAxLjk4NDM4LC0xLjU5NzY2IDIuMDQ2ODgsLTIuODk4NDR2LTguODM1OTR6Ij48L3BhdGg+PC9nPjwvZz4KPC9zdmc+">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+
+        body {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header-glass {
+            background: #020617;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Users Section Styles */
+        .users-header {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+        }
+
+        .users-header h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .users-header p {
+            color: #e5e7eb;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        .section-title {
+            font-size: 24px;
+            color: #ffffff;
+            font-weight: 600;
+            border-left: 4px solid rgba(99, 102, 241, 0.8);
+            padding-left: 10px;
+            margin: 30px 0 20px 0;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .users-table th {
+            padding: 15px;
+            text-align: left;
+            background-color: rgba(15, 23, 42, 0.6);
+            color: white;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .users-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            vertical-align: middle;
+            height: 60px;
+        }
+
+        .users-table tr:hover {
+            background-color: rgba(255, 255, 255, 0.07);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        .table-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+            height: 28px;
+            line-height: 18px;
+        }
+
+        .table-btn.login {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: white;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+        
+        .table-btn.login:hover {
+            background-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .table-btn.remove {
+            background-color: rgba(220, 38, 38, 0.2);
+            color: white;
+            border: 1px solid rgba(220, 38, 38, 0.4);
+        }
+        
+        .table-btn.remove:hover {
+            background-color: rgba(220, 38, 38, 0.3);
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+        
+        .flash-message {
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .flash-message.success {
+            background-color: rgba(16, 185, 129, 0.2);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #ecfdf5;
+        }
+        
+        .flash-message.error {
+            background-color: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fef2f2;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                height: auto;
+                padding: 15px 20px;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header-glass">
+        <div class="header-content">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0,0,256,256" style="margin-right: 10px;">
+                    <g fill="#ffffff" fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal">
+                        <g transform="scale(5.12,5.12)">
+                            <path d="M46.98438,4.01563c-0.55078,0.00781 -0.99219,0.46094 -0.98437,1.01172c0,0 -0.00391,0.45313 -0.33203,0.94531c-0.32812,0.49219 -0.91797,1.05469 -2.66797,1.05469h-8c-1.17578,0 -3.77734,0.30078 -6.26172,1.83984c-1.16406,0.71875 -2.27344,1.75781 -3.12891,3.13281h-1.60937c-0.03516,0 -0.06641,0.01563 -0.09766,0.01953c-12.45703,0.21094 -20.94141,3.87891 -21.30859,4.03906c-0.35937,0.16016 -0.59375,0.51953 -0.59375,0.91406v3.68359c0,1.08203 0.5,2.07031 1.375,2.70703c0.87109,0.63672 1.96484,0.8125 2.99609,0.48438c0.50781,-0.16406 1.04688,-0.34375 1.59766,-0.53125c1.625,-0.54687 3.30469,-1.11328 4.58984,-1.32031c0.57031,-0.09375 1.25,0.09375 1.76563,0.48828c0.22266,0.17188 0.60547,0.53125 0.67578,1.04297v6.47266h4.13281c0.46875,-2.43359 2.10547,-6 5.86719,-6c3.76563,0 5.39844,3.56641 5.87109,6h4.12891v-6.47266c0.07422,-0.51172 0.45313,-0.87109 0.67969,-1.04297c0.51563,-0.39453 1.19141,-0.58203 1.76172,-0.48828c1.28516,0.20313 2.96484,0.77344 4.58984,1.32031c0.54688,0.1875 1.08594,0.36719 1.59766,0.53125c1.03125,0.32813 2.125,0.15234 2.99609,-0.48437c0.875,-0.63672 1.375,-1.625 1.375,-2.70703v-3.68359c0,-0.39453 -0.23437,-0.75391 -0.59375,-0.91406c-0.32031,-0.14062 -6.76172,-2.92187 -16.60937,-3.78906c-1.48828,0.97266 -2.79687,2.68359 -2.79687,5.73047c0,0.00781 -0.00391,0.01563 -0.00391,0.02734c-0.01562,1.55078 -1.20312,2.80469 -2.72266,2.94531c-0.08984,0.00781 -0.17969,0.02734 -0.27344,0.02734c-1.65625,0 -3,-1.34375 -3,-3c0,-1.42578 0.99609,-2.61719 2.33203,-2.92187c-0.21094,0.89453 -0.33203,1.87109 -0.33203,2.94922c-0.00391,0.35938 0.18359,0.69531 0.49609,0.87891c0.3125,0.17969 0.69531,0.17969 1.00781,0c0.3125,-0.18359 0.5,-0.51953 0.49609,-0.87891c0,-1.02344 0.10938,-1.92187 0.30469,-2.71484c0.00781,0.00391 0.01563,0.00781 0.02344,0.01172c0.33984,-1.34375 0.92969,-2.40625 1.65234,-3.23437c0,-0.00391 0,-0.00391 0,-0.00781c0.54688,-0.61328 1.16406,-1.11328 1.8125,-1.51953c2.02734,-1.25391 4.42969,-1.53516 5.20703,-1.53516h8c2.25,0 3.66016,-0.9375 4.33203,-1.94531c0.67188,-1.00781 0.66797,-2.05469 0.66797,-2.05469c0.00391,-0.26953 -0.10156,-0.53125 -0.29297,-0.72266c-0.19141,-0.19141 -0.45312,-0.29687 -0.72266,-0.28906zM12.875,23.99609c-1.12109,0.17969 -2.71875,0.71875 -4.26562,1.24219l-0.06641,0.02344c-0.53516,0.18359 -1.0625,0.35938 -1.5625,0.51953c-0.53516,0.16797 -1.08594,0.25391 -1.64062,0.25391c-1.13281,0 -2.21875,-0.35547 -3.14453,-1.03125c-0.05859,-0.03906 -0.10937,-0.08984 -0.16406,-0.13281c0.33594,15.79297 3.65625,16.12109 4.89453,16.12891c0.07813,0.00781 0.18359,0.01563 0.30859,0.01563c0.42578,0 0.61719,-0.13281 1.34375,-0.62891c1.46484,-1 2.44922,-3.10547 2.92188,-6.26172c0.29297,-1.79687 1.11328,-3.04297 1.5,-3.96484v-6.125c-0.05859,-0.02344 -0.11328,-0.03906 -0.125,-0.03906zM37.125,23.99609c-0.01172,0 -0.06641,0.01563 -0.125,0.03906v6.125c0.38672,0.92188 1.20703,2.16797 1.5,3.96484c0.47266,3.15625 1.45703,5.26172 2.92188,6.26172c0.72656,0.49609 0.91797,0.62891 1.34375,0.62891c0.125,0 0.23047,-0.00781 0.30859,-0.01562c1.23828,-0.00781 4.55859,-0.33594 4.89453,-16.12891c-0.05469,0.04297 -0.10547,0.09375 -0.16406,0.13281c-0.92578,0.67578 -2.01172,1.03125 -3.14453,1.03125c-0.55469,0 -1.10547,-0.08594 -1.64062,-0.25391c-0.5,-0.16406 -1.02734,-0.33984 -1.5625,-0.51953l-0.06641,-0.02344c-1.54687,-0.52344 -3.14453,-1.0625 -4.26562,-1.24219zM25,26c-3.5,0 -4,5 -4,5l-2,14c0,0.23438 0.0625,0.46484 0.21484,0.64453c0.19141,0.22656 0.49219,0.35547 0.78516,0.35547h10c0.29297,0 0.59375,-0.12891 0.78516,-0.35547c0.15234,-0.17969 0.21484,-0.41016 0.21484,-0.64453l-2,-14c0,0 -0.5,-5 -4,-5zM15,32v8.88672c0.06641,1.25391 0.89844,2.35156 2.03125,2.84375l0.11719,0.03125l1.6875,-11.76172zM31.16406,32l1.6875,11.76563l0.10156,-0.03125c1.14063,-0.48828 1.98438,-1.59766 2.04688,-2.89844v-8.83594z"></path>
+                        </g>
+                    </g>
+                </svg>
+                <span>Game Forge</span>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                <a href="{{ url_for('games') }}" class="nav-link">Games</a>
+                <a href="{{ url_for('users') }}" class="nav-link active">Users</a>
+                {% if session.user_id %}
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="users-header">
+            <h1>GameForge Users</h1>
+            <p>View all registered users on the platform, login as a user, or remove users from the system.</p>
+        </section>
+
+        <section>
+            <h2 class="section-title">Registered Users</h2>
+            <div class="table-responsive">
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Total Play Time</th>
+                            <th>Average Rating</th>
+                            <th>Most Played Game</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.total_play_time }} hours</td>
+                            <td>{{ user.avarage_of_rating }}</td> 
+                            <td>{{ user.most_played if user.most_played else "None" }}</td>
+                            <td class="table-actions">
+                                <form action="/login_as_user" method="POST" style="display: inline-block; margin: 0;">
+                                    <input type="hidden" name="user_id" value="{{ user._id }}">
+                                    <button type="submit" class="table-btn login">Login as</button>
+                                </form>
+                                <form action="/remove_user" method="POST" style="display: inline-block; margin: 0;">
+                                    <input type="hidden" name="user_id" value="{{ user._id }}">
+                                    <button type="submit" class="table-btn remove">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close flash messages when clicked
+            document.querySelectorAll('.flash-message').forEach(message => {
+                message.addEventListener('click', function() {
+                    this.style.display = 'none';
+                });
+                
+                // Auto-close flash messages after 5 seconds
+                setTimeout(() => {
+                    message.style.animation = 'fadeOut 0.5s ease-out forwards';
+                    setTimeout(() => {
+                        message.style.display = 'none';
+                    }, 500);
+                }, 5000);
+            });
+            
+            // Page transition animation for links
+            document.querySelectorAll('a').forEach(link => {
+                if (link.href && link.href.includes(window.location.origin)) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        document.body.style.animation = 'fadeOut 0.5s ease-out forwards';
+                        setTimeout(() => {
+                            window.location = this.href;
+                        }, 500);
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
