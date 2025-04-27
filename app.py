@@ -120,7 +120,7 @@ def remove_user():
                 db.games.update_one({"name":comment["game"]},{"$pull":{"all_comment":{"user":user["name"]}}})#bu pull ile tüm oyun yorumlarını kişinin sildik.
             db.users.delete_one({"_id":ObjectId(user_id)})
                 
-    return redirect(url_for("home"))
+    return redirect(url_for("users_list"))
 @app.route("/login_as_user", methods=["POST"])
 def login_as_user():
     user_id=request.form.get("user_id")
@@ -377,6 +377,11 @@ def debug_user():
         }
         
         return str(result)
+@app.route('/users')
+def users_list():
+    with get_db_connection() as db:
+        users = list(db.users.find())
+    return render_template("users.html", users=users)
         
             
         
