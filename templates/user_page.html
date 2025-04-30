@@ -943,17 +943,23 @@
         });
         
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-            document.body.classList.add('modal-open');
             
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
             
-            const modalContent = document.getElementById(modalId).querySelector('.modal-content');
+            const modalContent = modal.querySelector('.modal-content');
             if (modalContent) {
                 modalContent.style.position = 'fixed';
                 modalContent.style.top = '50vh';
                 modalContent.style.left = '50%';
                 modalContent.style.transform = 'translate(-50%, -50%)';
+                
+                
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             }
         }
         

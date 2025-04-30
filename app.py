@@ -12,12 +12,12 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv('SECRET_KEY')
 
-# Configure upload folder
+
 UPLOAD_FOLDER = 'static/uploads/game_images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Create upload directory if it doesn't exist
+
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
@@ -51,13 +51,16 @@ def home():
 @app.route("/users")
 def users():
     """
-    New route to display all users in the system
-    This page will be accessible from the navigation bar
+    Clears any existing session and redirects to home page for login with a warning message
     """
-    with get_db_connection() as db:
-        users = list(db.users.find())
-    return render_template("users.html", users=users)
-
+    # Mevcut oturumu temizle
+    session.pop("user_id", None)
+    session.pop("user_name", None)
+    session.pop("avatar", None)
+    
+    # Ana sayfaya yönlendir ve mesaj göster
+    flash("Please select a user to login first.", "warning")
+    return redirect(url_for("home"))
 @app.route("/games")
 def games():
     search = request.args.get('search', '')
@@ -65,44 +68,51 @@ def games():
     sort_by = request.args.get('sort', 'rating')
     
     with get_db_connection() as db:
-        # Build the query
+      
         query = {}
         
         if search:
-            query['name'] = {'$regex': search, '$options': 'i'}  # Case-insensitive search
+            query['name'] = {'$regex': search, '$options': 'i'}  
             
         if genre_filter:
             query['genres'] = genre_filter
         
-        # Get all games based on the query
+        
         games_cursor = db.games.find(query)
         
-        # Sort the results
         if sort_by == 'rating':
-            games = list(games_cursor.sort('rating', -1))  # Descending order
+            games = list(games_cursor.sort('rating', -1))  
         elif sort_by == 'play_time':
             games = list(games_cursor.sort('play_time', -1))
         elif sort_by == 'name':
-            games = list(games_cursor.sort('name', 1))  # Ascending order
+            games = list(games_cursor.sort('name', 1)) 
         elif sort_by == 'comments':
-            # This is a bit more complex - we need to sort by the length of comments array
+          
             games = list(games_cursor)
             games.sort(key=lambda x: len(x.get('all_comments', [])) if x.get('all_comments') else 0, reverse=True)
         else:
             games = list(games_cursor)
         
-        # Get all available genres for the filter dropdown
+        for game in games:
+            if "all_comments" in game and isinstance(game["all_comments"], list):
+                game["all_comments"] = sorted(
+                    game["all_comments"],
+                    key=lambda comment: comment.get("play_time", 0),
+                    reverse=True
+                )
+        
+      
         all_genres = set()
         for game in db.games.find({}, {'genres': 1}):
             for genre in game.get('genres', []):
                 all_genres.add(genre)
         
-        # Add user-specific data if logged in
+ 
         if 'user_id' in session:
             user = db.users.find_one({"_id": ObjectId(session["user_id"])})
             if user:
                 for game in games:
-                    # Find the user's comments for this game
+                   
                     user_comments = [comment for comment in user.get('comments', []) if comment.get('game') == game['name']]
                     if user_comments:
                         game['user_play_time'] = user_comments[0].get('play_time', 0)
@@ -119,21 +129,21 @@ def add_game():
         optional1 = request.form.get("gameOptional1")
         optional2 = request.form.get("gameOptional2")
         
-        # Handle image file upload
+        
         photo_path = ""
         if 'gamePhoto' in request.files:
             file = request.files['gamePhoto']
             if file and file.filename != '' and allowed_file(file.filename):
-                # Generate unique filename to avoid overwrites
+       
                 filename = secure_filename(file.filename)
                 file_extension = filename.rsplit('.', 1)[1].lower()
                 unique_filename = f"{uuid.uuid4().hex}.{file_extension}"
                 
-                # Save the file
+           
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
                 file.save(file_path)
                 
-                # Save the relative path to the database
+            
                 photo_path = f"/static/uploads/game_images/{unique_filename}"
             else:
                 flash("Invalid image file. Please upload a valid image (PNG, JPG, JPEG, GIF).", "error")
@@ -165,7 +175,7 @@ def remove_game():
     with get_db_connection() as db:
         game = db.games.find_one({"_id": ObjectId(game_id)})
         if game:
-            # Delete the game image file if it exists
+   
             if game.get("photo") and game["photo"].startswith("/static/uploads/"):
                 try:
                     file_path = os.path.join(app.root_path, game["photo"].lstrip("/"))
@@ -176,7 +186,7 @@ def remove_game():
             
             db.games.delete_one({"_id": ObjectId(game_id)})
             
-            # Update any users who had this as their most played game
+            
             db.users.update_many(
                 {"most_played": game["name"]},
                 {"$set": {"most_played": None}} 
@@ -185,7 +195,7 @@ def remove_game():
         else:
             flash("Game not found.", "error")
 
-    # Return to the page that initiated the request
+
     referrer = request.referrer
     if referrer and url_for('users') in referrer:
         return redirect(url_for("users"))
@@ -225,7 +235,7 @@ def add_user():
     avatar_path = request.form.get("userAvatar")
     
     with get_db_connection() as db:
-        # Check if username already exists
+      
         existing_user = db.users.find_one({"name": name})
         if existing_user:
             flash(f"Username '{name}' is already taken. Please choose another username.", "error")
@@ -238,12 +248,13 @@ def add_user():
             "total_play_time": 0,  
             "most_played": None,
             "avarage_of_rating": 0,
-            "comments": []
+            "comments": [],
+            "created_at": datetime.now()
         }
         db.users.insert_one(user)
         flash(f"User '{name}' has been added successfully.", "success")
     
-    # Return to the page that initiated the request
+
     referrer = request.referrer
     if referrer and url_for('users') in referrer:
         return redirect(url_for("users"))
@@ -256,24 +267,24 @@ def remove_user():
     with get_db_connection() as db:
         user = db.users.find_one({"_id": ObjectId(user_id)})
         if user:
-            # Remove user's comments from all games
+           
             for comment in user.get("comments", []):
                 db.games.update_one(
                     {"name": comment["game"]},
                     {"$pull": {"all_comments": {"user": user["name"]}}}
                 )
             
-            # Delete the user
+            
             db.users.delete_one({"_id": ObjectId(user_id)})
             
-            # Clear session if the deleted user is the currently logged in user
+          
             if session.get("user_id") == user_id:
                 session.clear()
                 flash("Your account has been deleted.", "success")
             else:
                 flash(f"User '{user['name']}' has been deleted.", "success")
     
-    # Return to the page that initiated the request
+ 
     referrer = request.referrer
     if referrer and url_for('users') in referrer:
         return redirect(url_for("users"))
@@ -295,8 +306,8 @@ def login_as_user():
         else:
             flash("User not found", "error")
     
+    # user_page sayfasına yönlendir
     return redirect(url_for("user_page"))
-
 @app.route("/logout")
 def logout():
     session.pop("user_id", None)
@@ -339,11 +350,9 @@ def user_page():
                 game_copy = game.copy()
                 game_copy["user_play_time"] = user_play_time
                 
-                # Get user's rating for this game
                 user_rating = next((comment.get("rating", None) for comment in user_comments if "rating" in comment), None)
                 game_copy["user_rating"] = user_rating
                 
-                # Get user's comment for this game
                 user_comment_text = next((comment.get("text", "") for comment in user_comments), "")
                 game_copy["user_comment"] = user_comment_text
                 
@@ -352,7 +361,6 @@ def user_page():
             game["user_play_time"] = user_play_time
     
     return render_template("user_page.html", user=user, games=games, user_games=user_games)
-
 @app.route("/play_game", methods=["POST"])
 def play_game():
     if "user_id" not in session:
@@ -371,17 +379,17 @@ def play_game():
                 flash("User or Game not found", "error")
                 return redirect(url_for("user_page"))
             
-            # Update game play time
+          
             db.games.update_one(
                 {"_id": ObjectId(game_id)},
                 {"$inc": {"play_time": play_time}}
-            )# Update user total play time
+            )
             db.users.update_one(
                 {"_id": ObjectId(session["user_id"])},
                 {"$inc": {"total_play_time": play_time}}
             )
             
-            # Update or create user comment for this game
+            
             user_comment = None
             for comment in user.get("comments", []):
                 if comment.get("game") == game["name"]:
@@ -400,15 +408,15 @@ def play_game():
                     {"$push": {"comments": new_comment}}
                 )
             
-            # Update the user's most played game
+           
             update_most_played_game(session["user_id"])
             
             flash(f"You played {game['name']} for {play_time} hours", "success")
-            return redirect(url_for("games"))
+            return redirect(url_for("user_page"))
     except Exception as e:
         print(f"Error occurred: {str(e)}")
         flash(f"An error occurred: {str(e)}", "error")
-        return redirect(url_for("games"))
+        return redirect(url_for("user_page"))
 
 @app.route("/rate_game", methods=["POST"])
 def rating_game():
@@ -450,7 +458,7 @@ def rating_game():
         update_game_rating(game["_id"])
         
         flash(f"You rated {game['name']} {rating}/5 stars.", "success")
-        return redirect(url_for("games"))
+        return redirect(url_for("user_page"))
 
 @app.route("/comment_game", methods=["POST"])
 def comment_game():
@@ -481,15 +489,15 @@ def comment_game():
                 
         if not user_comment or user_comment.get("play_time", 0) < 1:
             flash("You need to play the game for at least 1 hour before commenting on it.", "error")
-            return redirect(url_for("games"))
+            return redirect(url_for("user"))
             
-        # Update user's comment
+       
         db.users.update_one(
             {"_id": ObjectId(session["user_id"]), "comments.game": game["name"]},
             {"$set": {"comments.$.text": comment_text}}
         )
         
-        # Check if user already has a comment in the game's comments
+       
         existing_comment = False
         for comment in game.get("all_comments", []):
             if comment.get("user") == user["name"]:
@@ -514,7 +522,7 @@ def comment_game():
             )
             
         flash(f"Your comment on {game['name']} has been saved.", "success")
-        return redirect(url_for("games"))
+        return redirect(url_for("user_page"))
 
 def update_most_played_game(user_id):
     try:
@@ -612,7 +620,7 @@ def migrate_user_avatars():
     print("Checking for users without avatars or needing avatar updates...")
     
     with get_db_connection() as db:
-        # Find all users that don't have an avatar field or have an outdated avatar
+        
         users_without_proper_avatar = list(db.users.find({
             "$or": [
                 {"avatar": {"$exists": False}},
@@ -627,22 +635,22 @@ def migrate_user_avatars():
         print(f"Found {len(users_without_proper_avatar)} users needing avatar updates. Migrating...")
         
         for user in users_without_proper_avatar:
-            # Determine proper avatar based on gender
+            
             if "gender" not in user:
-                # Default to male if gender is not specified
+               
                 user["gender"] = "male"
             
-            # Default avatars based on gender
+          
             if user["gender"] == "female":
                 avatar = "/static/img/Woman/image (10).png"
             else:
                 avatar = "/static/img/Man/image (11).png"
             
-            # If the user had a previous avatar and it's a custom one, keep it
+            
             if "avatar" in user and not user["avatar"].endswith(("Man.png", "Woman.png")):
                 avatar = user["avatar"]
             
-            # Update the user with the avatar field
+          
             db.users.update_one(
                 {"_id": user["_id"]},
                 {"$set": {
@@ -653,10 +661,33 @@ def migrate_user_avatars():
             print(f"Updated user: {user.get('name', 'Unknown')} with avatar: {avatar}")
         
         print("Avatar migration completed successfully!")
+def migrate_user_created_at():
+    """
+    Script to add created_at field for existing users in the database
+    """
+    print("Checking for users without created_at field...")
+    
+    with get_db_connection() as db:
+        users_without_date = list(db.users.find({"created_at": {"$exists": False}}))
+        
+        if not users_without_date:
+            print("All users have created_at field. No migration needed.")
+            return
+            
+        print(f"Found {len(users_without_date)} users without created_at. Migrating...")
+        
+        for user in users_without_date:
+            db.users.update_one(
+                {"_id": user["_id"]},
+                {"$set": {"created_at": datetime.now()}}
+            )
+            print(f"Updated user: {user.get('name', 'Unknown')} with current date")
+        
+        print("Date migration completed successfully!")
 
-# Run the migration when the app starts
+
 if __name__ == "__main__":
-    # Run the avatar migration
+  
     try:
         migrate_user_avatars()
     except Exception as e:
