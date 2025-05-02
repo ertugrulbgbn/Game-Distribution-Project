@@ -692,5 +692,9 @@ if __name__ == "__main__":
         migrate_user_avatars()
     except Exception as e:
         print(f"Error during avatar migration: {str(e)}")
+
+    
         
     app.run(debug=True)
+else:
+    app.config['SERVER_NAME'] = os.environ.get('WEBSITE_HOSTNAME')

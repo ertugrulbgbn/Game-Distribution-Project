@@ -870,13 +870,13 @@
         }
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Close flash messages when clicked
+          
             document.querySelectorAll('.flash-message').forEach(message => {
                 message.addEventListener('click', function() {
                     this.style.display = 'none';
                 });
                 
-                // Auto-close flash messages after 5 seconds
+             
                 setTimeout(() => {
                     message.style.animation = 'fadeOut 0.5s ease-out forwards';
                     setTimeout(() => {
