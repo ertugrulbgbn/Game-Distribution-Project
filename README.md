@@ -1,4 +1,4 @@
-# Game Forge Platform 🎮
+# Game Forge 🎮
 
 A web-based game distribution service allowing users to browse games, manage accounts, rate games, and leave comments.
 
@@ -44,12 +44,12 @@ https://gameforge1453.ey.r.appspot.com/home
 ## Developers & Contact 👨‍💻📞
 Created by two full-stack developers:
 
-**Metehan Pekacar (210444060):** 
-* Full-stack developer - Worked on database integration, backend functionality, and user features
-* **GitHub**: https://github.com/Codmetxx 
-* **Email**: codmet1905@gmail.com 
-
 **Ertuğrul Bağbanci (210444022):** 
 * Full-stack developer - Contributed to frontend design, deployment, and API integration
 * **GitHub**: https://github.com/ertugrulbgbn
 * **Email**: ertugrulbagbancii@gmail.com
+
+**Metehan Pekacar (210444060):** 
+* Full-stack developer - Worked on database integration, backend functionality, and user features
+* **GitHub**: https://github.com/Codmetxx 
+* **Email**: codmet1905@gmail.com 
