@@ -1,79 +1,55 @@
-🎮 Game Forge Platform
-Game Forge, kullanıcıların oyunları keşfedip değerlendirebildiği, yorum yapabildiği ve hesaplarını yönetebildiği web tabanlı bir oyun dağıtım servisidir. Modern teknolojilerle geliştirilen bu platform, Google App Engine üzerinde barındırılmakta ve MongoDB Atlas veritabanını kullanmaktadır.
+# Game Forge Platform 🎮
 
-🚀 Live Demo
-🔗 Uygulamayı Görüntüle
+A web-based game distribution service allowing users to browse games, manage accounts, rate games, and leave comments.
 
-🛠️ Kullanılan Teknolojiler ve Araçlar
-Frontend
+## Technologies & Tools Used 🛠️
+* **Frontend**: HTML 🌐, CSS 🎨, JavaScript 💻
+* **Backend**: Python 🐍, Flask 🌶️
+* **Database**: MongoDB Atlas 🗄️
+* **Hosting**: Google App Engine (PaaS) ☁️
+* **External Libraries**: 
+  * Flask (web framework) 🧩
+  * PyMongo (MongoDB integration) 🔄
+  * Python-dotenv (environment variables) 🔐
+  * Werkzeug (secure file handling) 📁
+  * Jinja2 (templating) 📝
+  * Font Awesome (icons) ✨
+  * Google Fonts (typography) 🔤
 
-HTML 🌐
+## Features & Implementation ✅
+* **User Management**: Create accounts, track gameplay hours, store preferences
+* **Game Catalog**: Browse, filter, and discover games
+* **Rating System**: Users can rate games on a 5-star scale
+* **Comments**: Share thoughts and experiences about games
+* **User Dashboard**: Track gameplay statistics and history
+* **Responsive Design**: Works across different devices and screen sizes
 
-CSS 🎨
+## Test Users
+The platform includes 10 different test users with varying engagement levels:
+1. **Habibi** - Male user with 471 hours of total play time, mainly playing "CS2"
+2. **Osimhen** - Male user with 212 hours across different games, mostly "GTA: Vice City"
+3. **Ayşe** - Female user (no activity yet)
+4. **Fatma** - Female user (no activity yet)
+5. **Mete** - Male user with 1978 hours, primarily on "CS2"
+6. **Elon Musk** - Male user (no activity yet)
+7. **Ertuğrul** - Male user with 1038 hours, mainly on "Euro Truck Simulator 2"
+8. **Tuğçe** - Female user (no activity yet)
+9. **Pro_Gamer** - Male user with 220 hours, mostly on "Astroneer"
+10. **Zeynep** - Female user (no activity yet)
 
-JavaScript 💻
+## Live Demo 🌍
+The application is currently deployed and accessible at:
+https://gameforge1453.ey.r.appspot.com/home
 
-Backend
+## Developers & Contact 👨‍💻📞
+Created by two full-stack developers:
 
-Python 🐍
+**Metehan Pekacar (210444060):** 
+* Full-stack developer - Worked on database integration, backend functionality, and user features
+* **GitHub**: https://github.com/Codmetxx 
+* **Email**: codmet1905@gmail.com 
 
-Flask 🌶️
-
-Veritabanı
-
-MongoDB Atlas 🗄️
-
-Barındırma (Hosting)
-
-Google App Engine ☁️
-
-Ek Kütüphane ve Araçlar
-
-Flask 🧩
-
-PyMongo 🔄
-
-Python-dotenv 🔐
-
-Werkzeug 📁
-
-Jinja2 📝
-
-Font Awesome ✨
-
-Google Fonts 🔤
-
-🎯 Özellikler
-👤 Kullanıcı Yönetimi: Hesap oluşturma, oyun saatleri takibi, kullanıcı tercihleri
-
-🎮 Oyun Kataloğu: Oyunları listeleme, filtreleme ve keşfetme
-
-⭐ Puanlama Sistemi: 5 yıldızlı değerlendirme
-
-💬 Yorumlar: Oyunlar hakkında düşünce ve deneyim paylaşımı
-
-📊 Kullanıcı Paneli: Oyun geçmişi ve istatistikler
-
-📱 Responsive Tasarım: Tüm cihazlarda uyumlu arayüz
-
-👨‍💻 Geliştiriciler
-🧑‍💻 Ertuğrul Bağbancı
-Full-stack Developer
-
-Frontend tasarımı, deployment işlemleri ve API entegrasyonu üzerinde çalıştı
-
-GitHub: ertugrulbgbn
-
-Email: ertugrulbagbancii@gmail.com
-
-🧑‍💻 Metehan Pekacar
-Full-stack Developer
-
-Backend fonksiyonları, veritabanı bağlantısı ve kullanıcı özellikleri geliştirdi
-
-GitHub: Codmetxx
-
-Email: codmet1905@gmail.com
-
-🧪 Test Kullanıcıları
-10 test kullanıcısı oluşturuldu. Bu kullanıcılar farklı seviyelerde aktiflik göstermekte. Özellikle Mete, Habibi ve Ertuğrul adlı kullanıcılar birçok oyunu oynayıp puanlamış ve yorum yapmıştır. Bu kullanıcı verileri, projenin temel işlevselliklerini başarıyla doğrulamaktadır.
+**Ertuğrul Bağbanci (210444022):** 
+* Full-stack developer - Contributed to frontend design, deployment, and API integration
+* **GitHub**: https://github.com/ertugrulbgbn
+* **Email**: ertugrulbagbancii@gmail.com
