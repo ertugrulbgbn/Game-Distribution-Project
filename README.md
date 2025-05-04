@@ -29,8 +29,6 @@ The application is currently deployed and accessible at:
 https://gameforge1453.ey.r.appspot.com/home
 
 ## Developers & Contact 👨‍💻📞
-Created by two full-stack developers:
-
 **Ertuğrul Bağbanci:** 
 * **GitHub**: https://github.com/ertugrulbgbn
 * **Email**: ertugrulbagbancii@gmail.com
