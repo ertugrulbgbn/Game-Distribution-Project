@@ -1,0 +1,12 @@
+runtime: python312
+
+handlers:
+  - url: /static
+    static_dir: static
+    
+  - url: /.*
+    script: auto
+    
+env_variables:
+  MONGO_URI: "mongodb+srv://ertugrulbagbancii:2P6zPJ1zMakbnrRM@cluster0.msdsuq7.mongodb.net/gamedb?retryWrites=true&w=majority"
+  SECRET_KEY: "saolsaol"

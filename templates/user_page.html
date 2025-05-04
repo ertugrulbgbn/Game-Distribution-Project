@@ -847,7 +847,8 @@
             </form>
         </div>
     </div>
-
+    
+    <!-- Comment Game Modal - Sadece oynadığı oyunları gösterir -->
     <div id="commentGameModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -866,10 +867,10 @@
                         {% endfor %}
                     </select>
                 </div>
-                <divclass="form-group">
+                <div class="form-group">
                     <label for="commentText">Your Comment*</label>
                     <textarea id="commentText" name="comment_text" class="form-control" required placeholder="Share your thoughts about this game..."></textarea>
-                </divclass=>
+                </div>
                 <div class="form-group">
                     <p style="color: #aaaaaa; font-size: 14px; text-align: center;">
                         <i class="fas fa-info-circle"></i>
@@ -943,17 +944,23 @@
         });
         
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
-            document.body.classList.add('modal-open');
             
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
             
-            const modalContent = document.getElementById(modalId).querySelector('.modal-content');
+            const modalContent = modal.querySelector('.modal-content');
             if (modalContent) {
                 modalContent.style.position = 'fixed';
                 modalContent.style.top = '50vh';
                 modalContent.style.left = '50%';
                 modalContent.style.transform = 'translate(-50%, -50%)';
+                
+                
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             }
         }
         
@@ -1004,7 +1011,6 @@
             });
         });
         
-        // Flash messages for form submission (optional)
         const showFlashMessage = (message, type = 'success') => {
             const flashContainer = document.createElement('div');
             flashContainer.className = `flash-message ${type}`;

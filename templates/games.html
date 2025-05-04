@@ -796,62 +796,11 @@
                             <div class="attribute-name">Total Play Time</div>
                             <div class="attribute-value">{{ game.play_time }} hours</div>
                         </div>
-                        {% if session.user_id %}
-                        <div class="attribute-card">
-                            <div class="attribute-name">Your Play Time</div>
-                            <div class="attribute-value">{{ game.user_play_time|default(0) }} hours</div>
-                        </div>
-                        {% endif %}
+                      
                     </div>
                 </div>
 
-                {% if session.user_id %}
-                <div class="game-section">
-                    <h2 class="section-title">Play & Rate</h2>
-                    <div class="game-attributes">
-                        <div class="attribute-card">
-                            <form action="{{ url_for('play_game') }}" method="POST">
-                                <input type="hidden" name="game_id" value="{{ game._id }}">
-                                <div class="attribute-name">Add Play Time</div>
-                                <div class="attribute-value" style="display: flex; gap: 10px; margin-top: 10px;">
-                                    <input type="number" name="play_time" class="filter-control" style="width: 80px;" min="1" max="24" value="1">
-                                    <button type="submit" class="filter-btn" style="width: 100%;">Play</button>
-                                </div>
-                            </form>
-                        </div>
-                        
-                        {% if game.rating_enable and game.user_play_time|default(0) >= 1 %}
-                        <div class="attribute-card">
-                            <form action="{{ url_for('rating_game') }}" method="POST">
-                                <input type="hidden" name="game_id" value="{{ game._id }}">
-                                <div class="attribute-name">Rate Game</div>
-                                <div class="attribute-value" style="display: flex; gap: 10px; margin-top: 10px;">
-                                    <select name="rating" class="filter-control">
-                                        <option value="1" {% if game.user_rating == 1 %}selected{% endif %}>1 - Poor</option>
-                                        <option value="2" {% if game.user_rating == 2 %}selected{% endif %}>2 - Fair</option>
-                                        <option value="3" {% if game.user_rating == 3 %}selected{% endif %}>3 - Good</option>
-                                        <option value="4" {% if game.user_rating == 4 %}selected{% endif %}>4 - Very Good</option>
-                                        <option value="5" {% if game.user_rating == 5 %}selected{% endif %}>5 - Excellent</option>
-                                    </select>
-                                    <button type="submit" class="filter-btn" style="width: 100%;">Rate</button>
-                                </div>
-                            </form>
-                        </div>
-                        
-                        <div class="attribute-card">
-                            <form action="{{ url_for('comment_game') }}" method="POST">
-                                <input type="hidden" name="game_id" value="{{ game._id }}">
-                                <div class="attribute-name">Leave a Comment</div>
-                                <div class="attribute-value" style="display: flex; flex-direction: column; gap: 10px; margin-top:10px;">
-                                    <textarea name="comment_text" class="filter-control" rows="3" placeholder="Write your comment here...">{{ game.user_comment }}</textarea>
-                                    <button type="submit" class="filter-btn">Submit Comment</button>
-                                </div>
-                            </form>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endif %}
+               
 
                 <div class="comments-section">
                     <h2 class="section-title">All Comments ({{ game.all_comments|length if game.all_comments else 0 }})</h2>
@@ -869,7 +818,9 @@
                                     <div class="comment-meta">
                                         <div>Play Time: {{ comment.play_time }} hours</div>
                                     </div>
+                    
                                 </div>
+                                
                                 <div class="comment-content">
                                     {{ comment.text }}
                                 </div>
@@ -907,7 +858,12 @@
             if (selectedGame) {
                 selectedGame.style.display = 'block';
                 
-                selectedGame.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => {
+                    selectedGame.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }, 100); 
             }
         }
         
@@ -919,13 +875,11 @@
         }
         
         document.addEventListener('DOMContentLoaded', function() {
-            // Close flash messages when clicked
             document.querySelectorAll('.flash-message').forEach(message => {
                 message.addEventListener('click', function() {
                     this.style.display = 'none';
                 });
                 
-                // Auto-close flash messages after 5 seconds
                 setTimeout(() => {
                     message.style.animation = 'fadeOut 0.5s ease-out forwards';
                     setTimeout(() => {
