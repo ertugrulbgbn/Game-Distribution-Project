@@ -31,12 +31,10 @@ https://gameforge1453.ey.r.appspot.com/home
 ## Developers & Contact 👨‍💻📞
 Created by two full-stack developers:
 
-**Ertuğrul Bağbanci (210444022):** 
-* Full-stack developer - Contributed to frontend design, deployment, and API integration
+**Ertuğrul Bağbanci:** 
 * **GitHub**: https://github.com/ertugrulbgbn
 * **Email**: ertugrulbagbancii@gmail.com
 
-**Metehan Pekacar (210444060):** 
-* Full-stack developer - Worked on database integration, backend functionality, and user features
+**Metehan Pekacar:** 
 * **GitHub**: https://github.com/Codmetxx 
 * **Email**: codmet1905@gmail.com 
