@@ -24,19 +24,6 @@ A web-based game distribution service allowing users to browse games, manage acc
 * **User Dashboard**: Track gameplay statistics and history
 * **Responsive Design**: Works across different devices and screen sizes
 
-## Test Users
-The platform includes 10 different test users with varying engagement levels:
-1. **Habibi** - Male user with 471 hours of total play time, mainly playing "CS2"
-2. **Osimhen** - Male user with 212 hours across different games, mostly "GTA: Vice City"
-3. **Ayşe** - Female user (no activity yet)
-4. **Fatma** - Female user (no activity yet)
-5. **Mete** - Male user with 1978 hours, primarily on "CS2"
-6. **Elon Musk** - Male user (no activity yet)
-7. **Ertuğrul** - Male user with 1038 hours, mainly on "Euro Truck Simulator 2"
-8. **Tuğçe** - Female user (no activity yet)
-9. **Pro_Gamer** - Male user with 220 hours, mostly on "Astroneer"
-10. **Zeynep** - Female user (no activity yet)
-
 ## Live Demo 🌍
 The application is currently deployed and accessible at:
 https://gameforge1453.ey.r.appspot.com/home
